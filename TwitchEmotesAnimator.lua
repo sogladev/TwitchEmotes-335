@@ -4,13 +4,18 @@ local TWITCHEMOTES_T = 0;
 function TwitchEmotesAnimator_OnUpdate(self, elapsed)
 
     if (TWITCHEMOTES_TimeSinceLastUpdate >= 0.033) then
-        -- Update animated emotes in chat windows
+        -- Update animated emotes in chat windows (WoTLK compatible)
         for _, frameName in pairs(CHAT_FRAMES) do
             local chatFrame = _G[frameName]
-            if chatFrame and chatFrame.visibleLines then
-                for _, visibleLine in ipairs(chatFrame.visibleLines) do
-                    if(chatFrame:IsShown() and visibleLine.messageInfo ~= TwitchEmotes_HoverMessageInfo) then 
-                        TwitchEmotesAnimator_UpdateEmoteInFontString(visibleLine, 28, 28);
+            if chatFrame and chatFrame:IsShown() then
+                -- In WoTLK, we need to iterate through fontstrings directly
+                for i = 1, chatFrame:GetNumRegions() do
+                    local region = select(i, chatFrame:GetRegions())
+                    if region and region:GetObjectType() == "FontString" then
+                        local text = region:GetText()
+                        if text and string.find(text, "|TInterface\\AddOns\\TwitchEmotes\\Emotes") then
+                            TwitchEmotesAnimator_UpdateEmoteInFontString(region, 28, 28);
+                        end
                     end
                 end
             end
