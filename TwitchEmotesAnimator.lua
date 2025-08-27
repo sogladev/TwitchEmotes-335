@@ -6,9 +6,12 @@ function TwitchEmotesAnimator_OnUpdate(self, elapsed)
     if (TWITCHEMOTES_TimeSinceLastUpdate >= 0.033) then
         -- Update animated emotes in chat windows
         for _, frameName in pairs(CHAT_FRAMES) do
-            for _, visibleLine in ipairs(_G[frameName].visibleLines) do
-                if(_G[frameName]:IsShown() and visibleLine.messageInfo ~= TwitchEmotes_HoverMessageInfo) then 
-                    TwitchEmotesAnimator_UpdateEmoteInFontString(visibleLine, 28, 28);
+            local chatFrame = _G[frameName]
+            if chatFrame and chatFrame.visibleLines then
+                for _, visibleLine in ipairs(chatFrame.visibleLines) do
+                    if(chatFrame:IsShown() and visibleLine.messageInfo ~= TwitchEmotes_HoverMessageInfo) then 
+                        TwitchEmotesAnimator_UpdateEmoteInFontString(visibleLine, 28, 28);
+                    end
                 end
             end
         end
@@ -47,14 +50,14 @@ function TwitchEmotesAnimator_OnUpdate(self, elapsed)
             
 
             for line=1, 17 do
-                local sentEntry = getglobal("TwitchStatsSentEntry"..line)
-                local recievedEntry = getglobal("TwitchStatsRecievedEntry"..line)
+                local sentEntry = _G["TwitchStatsSentEntry"..line]
+                local recievedEntry = _G["TwitchStatsRecievedEntry"..line]
 
-                if(sentEntry:IsVisible()) then
+                if(sentEntry and sentEntry:IsVisible()) then
                     TwitchEmotesAnimator_UpdateEmoteInFontString(sentEntry, 16, 16);
                 end
 
-                if(recievedEntry:IsVisible()) then
+                if(recievedEntry and recievedEntry:IsVisible()) then
                     TwitchEmotesAnimator_UpdateEmoteInFontString(recievedEntry, 16, 16);
                 end
             end

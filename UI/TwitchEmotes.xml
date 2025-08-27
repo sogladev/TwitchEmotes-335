@@ -5,7 +5,7 @@
   <!-- Copied from OptionSliderTemplate 2.4.3 because Blizzard is ......
 Check to see if they use consistent fontsizes in build > 8982 and remove this template.
 Revert PowaBarSliderTemplate to inherit from OptionsSliderTemplate if it's fixed as well.  -->
-  <Slider name="OptionsSmallSliderTemplate" orientation="HORIZONTAL" virtual="true" inherits="BackdropTemplate" enableMouse="true">
+  <Slider name="OptionsSmallSliderTemplate" orientation="HORIZONTAL" virtual="true" enableMouse="true">
     <Size>
       <AbsDimension x="144" y="17"/>
     </Size>
@@ -99,12 +99,8 @@ Revert PowaBarSliderTemplate to inherit from OptionsSliderTemplate if it's fixed
     </Layers>
     <Scripts>
       <OnLoad>
-        if SettingsPanel then self:SetParent(SettingsPanel); else self:SetParent(InterfaceOptionsFramePanelContainer) end;
         self.name = "TwitchEmotes";
-        local category = Settings.RegisterCanvasLayoutCategory(self, self.name)
-        Settings.RegisterAddOnCategory(category)
-
-        <!-- InterfaceOptions_AddCategory(self); -->
+        InterfaceOptions_AddCategory(self);
         
         self:RegisterEvent("ADDON_LOADED");
         self:SetScript("OnEvent",Emoticons_OnEvent);
@@ -625,8 +621,8 @@ Revert PowaBarSliderTemplate to inherit from OptionsSliderTemplate if it's fixed
   <Frame name="EmoticonMiniMapDropDown" inherits="UIDropDownMenuTemplate" id="1">
     <Scripts>
       <OnLoad>
-        local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
-	      LibDD:UIDropDownMenu_Initialize(self, Emoticons_LoadMiniMapDropdown, "MENU", 1);
+        -- Use native WoTLK function
+        UIDropDownMenu_Initialize(self, Emoticons_LoadMiniMapDropdown, "MENU", 1);
       </OnLoad>
     </Scripts>
   </Frame>

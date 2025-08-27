@@ -75,8 +75,8 @@ function TwitchEmotes_MinimapButton_OnClick(btn)
     if IsShiftKeyDown() then
         TwitchStatsScreen_OnLoad();
     else
-        LibDD:ToggleDropDownMenu(1, nil, EmoticonMiniMapDropDown,"cursor", 0, 0);
-        -- ToggleDropDownMenu(1, nil, EmoticonMiniMapDropDown,"cursor", 285, 0);
+        -- For WoTLK, use native function
+        ToggleDropDownMenu(1, nil, EmoticonMiniMapDropDown,"cursor", 0, 0);
     end
 end
 
@@ -101,11 +101,14 @@ function OpenMailBodyText.SetText(self, msg, ...)
 end
 
 function Emoticons_LoadMiniMapDropdown(self, level, menuList)
-    local info = LibDD:UIDropDownMenu_CreateInfo();
-    -- local info = UIDropDownMenu_CreateInfo();
+    -- For WoTLK, use native function
+    local info =  UIDropDownMenu_CreateInfo();
+    
     info.isNotRadio = true;
     info.notCheckable = true;
     info.notClickable = false;
+    info.noClickSound = 1; -- Set to 1 to suppress the sound when clicking the button
+    
     if (level or 1) == 1 then
         for k, v in ipairs(TwitchEmotes_dropdown_options) do
             if (Emoticons_Settings["FAVEMOTES"][k]) then
@@ -113,8 +116,10 @@ function Emoticons_LoadMiniMapDropdown(self, level, menuList)
                 info.text = v[1];
                 info.value = false;
                 info.menuList = k;
-                LibDD:UIDropDownMenu_AddButton(info);
-                -- UIDropDownMenu_AddButton(info);
+                info.noClickSound = 1; -- Set to 1 to suppress the sound when clicking the button
+                
+                -- For WoTLK, use native function
+                UIDropDownMenu_AddButton(info);
             end
         end
     else
@@ -130,8 +135,8 @@ function Emoticons_LoadMiniMapDropdown(self, level, menuList)
                 info.text = "|T" .. TwitchEmotes_defaultpack[va] .. "|t " .. va;
                 info.value = va;
                 info.func = Emoticons_Dropdown_OnClick;
-                LibDD:UIDropDownMenu_AddButton(info, level);
-                -- UIDropDownMenu_AddButton(info, level);
+                info.noClickSound = 1; -- Set to 1 to suppress the sound when clicking the button
+                UIDropDownMenu_AddButton(info, level);
             end
         end
     end
@@ -163,13 +168,15 @@ function SendChatMessage(msg, ...)
     end
 end
 
-local bnsw = BNSendWhisper;
-function BNSendWhisper(id, msg, ...)
-    if msg ~= nil then
-        if Emoticons_Settings["ENABLE_CLICKABLEEMOTES"] then
-            msg = TwitchEmotes_Message_StripEscapes(msg) 
+if BNSendWhisper then
+    local bnsw = BNSendWhisper;
+    function BNSendWhisper(id, msg, ...)
+        if msg ~= nil then
+            if Emoticons_Settings["ENABLE_CLICKABLEEMOTES"] then
+                msg = TwitchEmotes_Message_StripEscapes(msg) 
+            end
+            bnsw(id, msg, ...);
         end
-        bnsw(id, msg, ...);
     end
 end
 
@@ -323,8 +330,8 @@ function Emoticons_OnEvent(self, event, ...)
             end
         end
 
-        local dateTime = C_DateAndTime.GetCurrentCalendarTime()
-        if (dateTime.monthDay==4 and dateTime.month==5) and (dateTime.hour >= 10) then
+        local dateTime = date("*t")
+        if (dateTime.day==4 and dateTime.month==5) and (dateTime.hour >= 10) then
             TwitchEmotes_emoticons["Sayrahs"] = "PepeSith"
             TwitchEmotes_emoticons["Sayramage"] = "PepeSith"
             TwitchEmotes_emoticons["Sayradh"] = "PepeSith"
@@ -347,8 +354,13 @@ function Emoticons_OnEvent(self, event, ...)
 		-- TODO: Waiting 1 second is kinda arbitrary, find a nicer solution.
 		-- We don't accept Emote stat updates before ElvUI has posted it's chat history
 		-- else they will be counted twice
-		C_Timer.After(1, function()
-			accept_stat_updates = true;
+		local timerFrame = CreateFrame("Frame")
+		timerFrame:SetScript("OnUpdate", function(self, elapsed)
+			self.elapsed = (self.elapsed or 0) + elapsed
+			if self.elapsed >= 1 then
+				accept_stat_updates = true;
+				self:SetScript("OnUpdate", nil)
+			end
 		end)
         
         Broker_TwitchEmotes = LDB:NewDataObject("TwitchEmotes", {
@@ -418,18 +430,22 @@ function Emoticons_InitChannelSettings()
         "CHAT_MSG_WHISPER",
         "CHAT_MSG_WHISPER_INFORM",
         "CHAT_MSG_CHANNEL",
-        "CHAT_MSG_BN_WHISPER",
-        "CHAT_MSG_BN_WHISPER_INFORM",
-        "CHAT_MSG_BN_CONVERSATION",
         "CHAT_MSG_INSTANCE_CHAT",
         "CHAT_MSG_INSTANCE_CHAT_LEADER",
         "MAIL"
     }
+    
+    -- Add Battle.net channels only if they exist (not in WoTLK)
+    if BNSendWhisper then
+        table.insert(channels, "CHAT_MSG_BN_WHISPER")
+        table.insert(channels, "CHAT_MSG_BN_WHISPER_INFORM")
+        table.insert(channels, "CHAT_MSG_BN_CONVERSATION")
+    end
 
     for i=1, #channels do
 
         local channel = channels[i];
-        local frame = getglobal("EmoticonsOptionsControlsPanel"..channel);
+        local frame = _G["EmoticonsOptionsControlsPanel"..channel];
         if(frame ~= nil) then
             frame:SetChecked(Emoticons_Settings[channel]);
         end
@@ -459,36 +475,47 @@ end
 function setAllFav(value)
     for n, m in ipairs(Emoticons_Settings["FAVEMOTES"]) do
         Emoticons_Settings["FAVEMOTES"][n] = value;
-        getglobal("favCheckButton_" .. TwitchEmotes_dropdown_options[n][1]):SetChecked(value);
+        _G["favCheckButton_" .. TwitchEmotes_dropdown_options[n][1]]:SetChecked(value);
     end
 end
 
 function Emoticons_OptionsWindow_OnShow(self)
 
-    if Emoticons_Settings["MINIMAPBUTTON"] then
-        getglobal("$showMinimapButtonButton"):SetChecked(true);
+    -- The frames are literally named with "$" in WoTLK, not parent+child
+    local minimapButton = _G["$showMinimapButtonButton"]
+    if minimapButton and Emoticons_Settings["MINIMAPBUTTON"] then
+        minimapButton:SetChecked(true);
     end
 
-    if Emoticons_Settings["LARGEEMOTES"] then
-        getglobal("$showLargeEmotesButton"):SetChecked(true);
+    local largeEmotesButton = _G["$showLargeEmotesButton"]
+    if largeEmotesButton and Emoticons_Settings["LARGEEMOTES"] then
+        largeEmotesButton:SetChecked(true);
 	end
 
-    if Emoticons_Settings["ENABLE_CLICKABLEEMOTES"] then
-        getglobal("$showClickableEmotesButton"):SetChecked(true);
+    local clickableEmotesButton = _G["$showClickableEmotesButton"]
+    if clickableEmotesButton and Emoticons_Settings["ENABLE_CLICKABLEEMOTES"] then
+        clickableEmotesButton:SetChecked(true);
     end
 
-    if Emoticons_Settings["ENABLE_AUTOCOMPLETE"] then
-        getglobal("$autocompleteCheckButton"):SetChecked(true);
+    local animatedEmotesButton = _G["$EnableAnimatedEmotesButton"]
+    if animatedEmotesButton and Emoticons_Settings["ENABLE_ANIMATEDEMOTES"] then
+        animatedEmotesButton:SetChecked(true);
     end
 
-    if Emoticons_Settings["AUTOCOMPLETE_CONFIRM_WITH_TAB"] then
-        getglobal("$autocompleteUseTabToComplete"):SetChecked(true);
+    local autocompleteButton = _G["$autocompleteCheckButton"]
+    if autocompleteButton and Emoticons_Settings["ENABLE_AUTOCOMPLETE"] then
+        autocompleteButton:SetChecked(true);
     end
-    
 
-    -- getglobal("$autocompleteCheckButton").tooltipText = "Start with a ':' to show a list of emotes.";
+    local autocompleteTabButton = _G["$autocompleteUseTabToComplete"]
+    if autocompleteTabButton and Emoticons_Settings["AUTOCOMPLETE_CONFIRM_WITH_TAB"] then
+        autocompleteTabButton:SetChecked(true);
+    end
 
-    getglobal("$autocompleteUseTabToComplete").tooltipText = "This will disable cycling the selected suggestion with tab, the arrow keys will still work.";
+    -- Set tooltip
+    if autocompleteTabButton then
+        autocompleteTabButton.tooltipText = "This will disable cycling the selected suggestion with tab, the arrow keys will still work.";
+    end
 
     favall = CreateFrame("CheckButton", "favall_GlobalName",
                          EmoticonsOptionsControlsPanel, "UIPanelButtonTemplate");
@@ -536,7 +563,7 @@ function Emoticons_OptionsWindow_OnShow(self)
                                          "favCheckButton_" .. c[1],
                                          favframe_GlobalName,
                                          "ChatConfigCheckButtonTemplate");
-            favCheckButton:SetParent(getglobal("favCheckButton_" .. anchor));
+            favCheckButton:SetParent(_G["favCheckButton_" .. anchor]);
             if ((itemcnt % 10) ~= 0) then
                 favCheckButton:SetPoint("TOPLEFT", 0, -16);
             else
@@ -546,10 +573,10 @@ function Emoticons_OptionsWindow_OnShow(self)
         itemcnt = itemcnt + 1;
         anchor = c[1];
 
-        getglobal(favCheckButton:GetName() .. "Text"):SetText(c[1]);
-        if (getglobal("favCheckButton_" .. c[1]):GetChecked() ~=
+        _G[favCheckButton:GetName() .. "Text"]:SetText(c[1]);
+        if (_G["favCheckButton_" .. c[1]]:GetChecked() ~=
             Emoticons_Settings["FAVEMOTES"][a]) then
-            getglobal("favCheckButton_" .. c[1]):SetChecked(
+            _G["favCheckButton_" .. c[1]]:SetChecked(
                 Emoticons_Settings["FAVEMOTES"][a]);
         end
         favCheckButton.tooltip = "Checked boxes will show in the dropdownlist.";

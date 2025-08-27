@@ -1,4 +1,4 @@
-## Interface: 110200
+## Interface: 30300
 ## Title: |TInterface\Addons\TwitchEmotes\Emotes\Pepes\EZ:0|tTwitch Emotes|TInterface\Addons\TwitchEmotes\Emotes\Pepes\EZ:0|t
 ## IconTexture: Interface\AddOns\TwitchEmotes\Emotes\1337.tga
 ## Author: Ren - Illidan (US) & Jons - MirageRaceway (EU)

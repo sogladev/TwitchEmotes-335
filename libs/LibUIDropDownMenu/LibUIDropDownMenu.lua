@@ -507,13 +507,33 @@ local function creatre_DropDownList(name, parent)
 	local fbd = name and _G[name.."Backdrop"] or CreateFrame("Frame", name and (name.."Backdrop") or nil, f, BackdropTemplateMixin and "DialogBorderDarkTemplate" or nil)
 	fbd:SetAllPoints()
 	fbd.backdropInfo = BACKDROP_DIALOG_DARK
+	-- WoTLK compatibility: Manually set backdrop if BackdropTemplateMixin doesn't exist
+	if not BackdropTemplateMixin then
+		fbd:SetBackdrop(BACKDROP_DIALOG_DARK)
+	end
 	f.Backdrop = fbd
 	
-	local fmb = name and _G[name.."MenuBackdrop"] or CreateFrame("Frame", name and (name.."MenuBackdrop") or nil, f, TooltipBackdropTemplateMixin and "TooltipBackdropTemplate" or nil)
+	-- WoTLK compatibility: Check for template existence before using it
+	local tooltipTemplate = nil
+	if _G["TooltipBackdropTemplate"] then
+		tooltipTemplate = "TooltipBackdropTemplate"
+	end
+	local fmb = name and _G[name.."MenuBackdrop"] or CreateFrame("Frame", name and (name.."MenuBackdrop") or nil, f, tooltipTemplate)
 	fmb:SetAllPoints()
 	fmb.backdropInfo = BACKDROP_TOOLTIP_16_16_5555
-	fmb:SetBackdropBorderColor(TOOLTIP_DEFAULT_COLOR.r, TOOLTIP_DEFAULT_COLOR.g, TOOLTIP_DEFAULT_COLOR.b)
-	fmb:SetBackdropColor(TOOLTIP_DEFAULT_BACKGROUND_COLOR.r, TOOLTIP_DEFAULT_BACKGROUND_COLOR.g, TOOLTIP_DEFAULT_BACKGROUND_COLOR.b)
+	-- WoTLK compatibility: Manually set backdrop and colors
+	if not TooltipBackdropTemplateMixin then
+		fmb:SetBackdrop(BACKDROP_TOOLTIP_16_16_5555)
+	end
+	-- WoTLK compatibility: Use fallback colors if constants don't exist
+	if TOOLTIP_DEFAULT_COLOR and TOOLTIP_DEFAULT_BACKGROUND_COLOR then
+		fmb:SetBackdropBorderColor(TOOLTIP_DEFAULT_COLOR.r, TOOLTIP_DEFAULT_COLOR.g, TOOLTIP_DEFAULT_COLOR.b)
+		fmb:SetBackdropColor(TOOLTIP_DEFAULT_BACKGROUND_COLOR.r, TOOLTIP_DEFAULT_BACKGROUND_COLOR.g, TOOLTIP_DEFAULT_BACKGROUND_COLOR.b)
+	else
+		-- WoTLK fallback colors (standard tooltip colors)
+		fmb:SetBackdropBorderColor(1, 1, 1, 1) -- White border
+		fmb:SetBackdropColor(0, 0, 0, 0.9) -- Dark background with transparency
+	end
 	f.MenuBackdrop = fmb
 	
 	f.Button1 = name and _G[name.."Button1"] or create_MenuButton(name and (name.."Button1") or nil, f) -- to replace the inherits of "UIDropDownMenuButtonTemplate"
