@@ -1,0 +1,66 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Script file="Lib-EditBox-AutoComplete.lua"/>
+	<!-- Change this to a script calling SetupAutoComplete() on load -->
+	<!-- <EditBox name="EditBoxAutoCompleteTemplate" virtual="true">
+		<Scripts>
+			<OnTabPressed function="EditBoxAutoComplete_OnTabPressed"/>
+			<OnEnterPressed function="EditBoxAutoComplete_OnEnterPressed"/>
+			<OnTextChanged function="EditBoxAutoComplete_OnTextChanged"/>
+			<OnChar function="EditBoxAutoComplete_OnChar"/>
+			<OnEditFocusLost function="EditBoxAutoComplete_OnEditFocusLost"/>
+			<OnEscapePressed function="EditBoxAutoComplete_OnEscapePressed"/>
+			<OnArrowPressed function="EditBoxAutoComplete_OnArrowPressed"/>
+		</Scripts>
+	</EditBox> -->
+	<Button name="EditBoxAutoCompleteButtonTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="120" y="14"/>
+		</Size>
+		<Scripts>
+			<OnClick function="EditBoxAutoCompleteButton_OnClick"/>
+			<OnLoad>
+				self:GetFontString():SetPoint("LEFT", self, "LEFT", 15, 0)
+			</OnLoad>
+		</Scripts>
+		<ButtonText name="$parentText"/>
+		<NormalFont style="GameFontNormal"/>
+		<HighlightFont style="GameFontHighlight"/>
+		<DisabledFont style="GameFontDisable"/>
+		<HighlightTexture inherits="UIPanelButtonHighlightTexture"/>
+	</Button>
+	<Frame name="EditBoxAutoCompleteBox" parent="UIParent" hidden="true" inherits="BackdropTemplate">
+		
+		<Size>
+			<AbsDimension x="5" y="5"/>
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER"/>
+		</Anchors>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="EditBoxAutoCompleteInstructions" inherits="GameFontDisableSmall" text="PRESS_TAB">
+					<Anchors>
+						<Anchor point="BOTTOMLEFT">
+							<Offset x="15" y="10"/>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="EditBoxAutoCompleteButton1" inherits="EditBoxAutoCompleteButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-10"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad function="EditBoxAutoComplete_OnLoad"/>
+		</Scripts>
+	</Frame>
+</Ui>

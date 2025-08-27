@@ -1,0 +1,633 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+
+  <!-- Copied from OptionSliderTemplate 2.4.3 because Blizzard is ......
+Check to see if they use consistent fontsizes in build > 8982 and remove this template.
+Revert PowaBarSliderTemplate to inherit from OptionsSliderTemplate if it's fixed as well.  -->
+  <Slider name="OptionsSmallSliderTemplate" orientation="HORIZONTAL" virtual="true" inherits="BackdropTemplate" enableMouse="true">
+    <Size>
+      <AbsDimension x="144" y="17"/>
+    </Size>
+    <HitRectInsets>
+      <AbsInset left="0" right="0" top="-10" bottom="-10"/>
+    </HitRectInsets>
+    <!-- <Backdrop bgFile="Interface\Buttons\UI-SliderBar-Background" edgeFile="Interface\Buttons\UI-SliderBar-Border" tile="true">
+      <EdgeSize>
+        <AbsValue val="8"/>
+      </EdgeSize>
+      <TileSize>
+        <AbsValue val="8"/>
+      </TileSize>
+      <BackgroundInsets>
+        <AbsInset left="3" right="3" top="6" bottom="6"/>
+      </BackgroundInsets>
+    </Backdrop> -->
+    <Layers>
+      <Layer level="ARTWORK">
+        <FontString name="$parentText" inherits="GameFontNormalSmall">
+          <Anchors>
+            <Anchor point="BOTTOM" relativePoint="TOP"/>
+          </Anchors>
+        </FontString>
+        <FontString name="$parentLow" inherits="GameFontHighlightSmall" text="LOW">
+          <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT">
+              <Offset>
+                <AbsDimension x="0" y="3"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </FontString>
+        <FontString name="$parentHigh" inherits="GameFontHighlightSmall" text="HIGH">
+          <Anchors>
+            <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT">
+              <Offset>
+                <AbsDimension x="0" y="3"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </FontString>
+      </Layer>
+    </Layers>
+    <Scripts>
+      <OnLeave>
+      </OnLeave>
+    </Scripts>
+    <ThumbTexture name="$parentThumb" file="Interface\Buttons\UI-SliderBar-Button-Horizontal">
+      <Size>
+        <AbsDimension x="32" y="32"/>
+      </Size>
+    </ThumbTexture>
+  </Slider>
+
+  <Slider name="PowaBarSliderTemplate" inherits="OptionsSmallSliderTemplate" virtual="true">
+    <Scripts>
+    </Scripts>
+  </Slider>
+
+  <Frame name="EmoticonsOptionsControlsPanel" hidden="false"> <!-- parent="InterfaceOptionsFramePanelContainer">-->
+    <Layers>
+      <Layer level="ARTWORK">
+        <FontString name="$parentTitle" text="Twitch Chat Emotes config" inherits="GameFontNormalLarge" justifyh="LEFT" justifyv="TOP">
+          <Anchors>
+            <Anchor point="TOPLEFT">
+              <Offset>
+                <AbsDimension x="14" y="-8"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </FontString>
+        <FontString name="$parentSubText" text="Select channels in which you want to see the Emoticons . Note: General, Trade, Localdefence etc all come under the category of 'Channels' . " inherits="GameFontHighlightSmall" nonSpaceWrap="true" maxLines="3" justifyh="LEFT" justifyv="TOP">
+          <Size>
+            <AbsDimension y="32" x="0"/>
+          </Size>
+          <Anchors>
+            <Anchor point="TOPLEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT">
+              <Offset>
+                <AbsDimension x="0" y="-8"/>
+              </Offset>
+            </Anchor>
+            <Anchor point="RIGHT">
+              <Offset>
+                <AbsDimension x="-32" y="0"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </FontString>
+      </Layer>
+    </Layers>
+    <Scripts>
+      <OnLoad>
+        if SettingsPanel then self:SetParent(SettingsPanel); else self:SetParent(InterfaceOptionsFramePanelContainer) end;
+        self.name = "TwitchEmotes";
+        local category = Settings.RegisterCanvasLayoutCategory(self, self.name)
+        Settings.RegisterAddOnCategory(category)
+
+        <!-- InterfaceOptions_AddCategory(self); -->
+        
+        self:RegisterEvent("ADDON_LOADED");
+        self:SetScript("OnEvent",Emoticons_OnEvent);
+      </OnLoad>
+      <OnShow>
+        Emoticons_OptionsWindow_OnShow(self);
+      </OnShow>
+      
+
+
+    </Scripts>
+    <Frames>
+      <CheckButton name="$parentCHAT_MSG_SAY" inherits="ChatConfigCheckButtonTemplate">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentSubText" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="-2" y="0"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            getglobal(self:GetName().."Text"):SetText("Say");
+          </OnLoad>
+          <OnClick>
+            Emoticons_SetType("CHAT_MSG_SAY",self:GetChecked());
+          </OnClick>
+        </Scripts>
+      </CheckButton>
+      <CheckButton name="$parentCHAT_MSG_YELL" inherits="ChatConfigCheckButtonTemplate">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentCHAT_MSG_SAY" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="0"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            getglobal(self:GetName().."Text"):SetText("Yell");
+          </OnLoad>
+          <OnClick>
+            Emoticons_SetType("CHAT_MSG_YELL",self:GetChecked());
+          </OnClick>
+        </Scripts>
+      </CheckButton>
+      <CheckButton name="$parentCHAT_MSG_GUILD" inherits="ChatConfigCheckButtonTemplate">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentCHAT_MSG_YELL" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="0"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            getglobal(self:GetName().."Text"):SetText("Guild");
+          </OnLoad>
+          <OnClick>
+            Emoticons_SetType("CHAT_MSG_GUILD",self:GetChecked());
+          </OnClick>
+        </Scripts>
+      </CheckButton>
+      <!--<<CheckButton name="$parentCHAT_MSG_OFFICER" inherits="ChatConfigCheckButtonTemplate">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentCHAT_MSG_GUILD" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="0"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            getglobal(self:GetName().."Text"):SetText("Officer");
+          </OnLoad>
+          <OnClick>
+            Emoticons_SetType("CHAT_MSG_OFFICER",self:GetChecked());
+          </OnClick>
+        </Scripts>
+      </CheckButton>-->
+      <CheckButton name="$parentCHAT_MSG_WHISPER" inherits="ChatConfigCheckButtonTemplate">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentCHAT_MSG_SAY" relativePoint="TOPRIGHT">
+            <Offset>
+              <AbsDimension x="150" y="0"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            getglobal(self:GetName().."Text"):SetText("Whisper");
+          </OnLoad>
+          <OnClick>
+            Emoticons_SetType("CHAT_MSG_WHISPER",self:GetChecked());
+          </OnClick>
+        </Scripts>
+      </CheckButton>
+      <CheckButton name="$parentCHAT_MSG_PARTY" inherits="ChatConfigCheckButtonTemplate">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentCHAT_MSG_WHISPER" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="0"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            getglobal(self:GetName().."Text"):SetText("Party");
+          </OnLoad>
+          <OnClick>
+            Emoticons_SetType("CHAT_MSG_PARTY",self:GetChecked());
+          </OnClick>
+        </Scripts>
+      </CheckButton>
+      <CheckButton name="$parentCHAT_MSG_RAID" inherits="ChatConfigCheckButtonTemplate">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentCHAT_MSG_PARTY" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="0"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            getglobal(self:GetName().."Text"):SetText("Raid");
+          </OnLoad>
+          <OnClick>
+            Emoticons_SetType("CHAT_MSG_RAID",self:GetChecked());
+          </OnClick>
+        </Scripts>
+      </CheckButton>
+      <CheckButton name="$parentCHAT_MSG_CHANNEL" inherits="ChatConfigCheckButtonTemplate">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentCHAT_MSG_RAID" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="0"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            getglobal(self:GetName().."Text"):SetText("Channel");
+          </OnLoad>
+          <OnClick>
+            Emoticons_SetType("CHAT_MSG_CHANNEL",self:GetChecked());
+          </OnClick>
+        </Scripts>
+      </CheckButton>.
+      <CheckButton name="$parentCHAT_MSG_BN_WHISPER" inherits="ChatConfigCheckButtonTemplate">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentCHAT_MSG_WHISPER" relativePoint="TOPRIGHT">
+            <Offset>
+              <AbsDimension x="150" y="0"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            getglobal(self:GetName().."Text"):SetText("Battle.net Whisper");
+          </OnLoad>
+          <OnClick>
+            Emoticons_SetType("CHAT_MSG_BN_WHISPER",self:GetChecked());
+          </OnClick>
+        </Scripts>
+      </CheckButton>
+      <CheckButton name="$parentCHAT_MSG_BN_CONVERSATION" inherits="ChatConfigCheckButtonTemplate">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentCHAT_MSG_BN_WHISPER" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="0"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            getglobal(self:GetName().."Text"):SetText("Battle.net Conversation");
+          </OnLoad>
+          <OnClick>
+            Emoticons_SetType("CHAT_MSG_BN_CONVERSATION",self:GetChecked());
+          </OnClick>
+        </Scripts>
+      </CheckButton>
+      <CheckButton name="$parentMAIL" inherits="ChatConfigCheckButtonTemplate">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentCHAT_MSG_BN_CONVERSATION" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="0"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            getglobal(self:GetName().."Text"):SetText("Mail");
+          </OnLoad>
+          <OnClick>
+            Emoticons_SetType("MAIL",self:GetChecked());
+          </OnClick>
+        </Scripts>
+      </CheckButton>
+      <Frame name="$ChatFrameChannelButton">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="-140"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Size>
+          <AbsDimension x="600" y="16" />
+        </Size>
+        <Layers>
+          <Layer level="ARTWORK">
+            <FontString name="$optionsSection" text="Options" inherits="GameFontNormal" nonSpaceWrap="true" maxLines="1" justifyh="Center" justifyv="TOP">
+              <Size>
+                <AbsDimension x="600" y="2"/>
+              </Size>
+              <Anchors>
+                <Anchor point="TOPLEFT" relativeTo="$ChatFrameChannelButton" relativePoint="BOTTOMLEFT">
+                  <Offset>
+                    <AbsDimension x="0" y="18"/>
+                  </Offset>
+                </Anchor>
+                <Anchor point="RIGHT">
+                  <Offset>
+                    <AbsDimension x="0" y="8"/>
+                  </Offset>
+                </Anchor>
+              </Anchors>
+            </FontString>
+          </Layer>
+          <Layer level="BACKGROUND">
+            <Texture name="retete" file="Interface/CHATFRAME/UI-ChatFrame-BorderTop">
+              <Size>
+                <AbsDimension x="240" y="16"/>
+              </Size>
+              <Anchors>
+                <Anchor point="TOPLEFT">
+                  <Offset>
+                    <AbsDimension x="0" y="0"/>
+                  </Offset>
+                </Anchor>
+              </Anchors>
+            </Texture>
+          </Layer>
+          <Layer level="OVERLAY">
+            <Texture file="Interface/CHATFRAME/UI-ChatFrame-BorderTop">
+              <Size>
+                <AbsDimension x="240" y="16"/>
+              </Size>
+              <Anchors>
+                <Anchor point="TOPRIGHT"/>
+              </Anchors>
+            </Texture>
+          </Layer>
+        </Layers>
+      </Frame>
+      <CheckButton name="$showMinimapButtonButton" inherits="InterfaceOptionsCheckButtonTemplate">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$optionsSection" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="-2" y="-25"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            getglobal(self:GetName() .. "Text"):SetText("Show Minimap Button");
+          </OnLoad>
+          <OnClick>
+            Emoticons_SetMinimapButton(self:GetChecked());
+          </OnClick>
+        </Scripts>
+      </CheckButton>
+      <CheckButton name="$showLargeEmotesButton" inherits="InterfaceOptionsCheckButtonTemplate">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$showMinimapButtonButton" relativePoint="TOPRIGHT">
+            <Offset>
+              <AbsDimension x="322" y="0"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            getglobal(self:GetName() .. "Text"):SetText("Enable large emotes");
+          </OnLoad>
+          <OnClick>
+            Emoticons_SetLargeEmotes(self:GetChecked());
+          </OnClick>
+        </Scripts>
+      </CheckButton>
+      <CheckButton name="$showClickableEmotesButton" inherits="InterfaceOptionsCheckButtonTemplate">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$showMinimapButtonButton" relativePoint="TOPRIGHT">
+            <Offset>
+              <AbsDimension x="158" y="0"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            getglobal(self:GetName() .. "Text"):SetText("Mouseover emotes\nand shift-click linking");
+          </OnLoad>
+          <OnClick>
+            Emoticons_SetClickableEmotes(self:GetChecked());
+          </OnClick>
+        </Scripts>
+      </CheckButton>
+
+      <CheckButton name="$EnableAnimatedEmotesButton" inherits="InterfaceOptionsCheckButtonTemplate">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$showMinimapButtonButton" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="0"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            getglobal(self:GetName() .. "Text"):SetText("Enable Animated Emotes");
+            self:SetChecked(Emoticons_Settings["ENABLE_ANIMATEDEMOTES"])
+          </OnLoad>
+          <OnClick>
+            Emoticons_EnableAnimatedEmotes(self:GetChecked());
+          </OnClick>
+        </Scripts>
+      </CheckButton>
+
+
+      <Frame name="$AutoCompleteSettingsPanel">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$optionsSection" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="-80"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Size>
+          <AbsDimension x="600" y="16" />
+        </Size>
+        <Layers>
+          <Layer level="ARTWORK">
+            <FontString name="$parentTextfav" text="Autocomplete settings" inherits="GameFontNormal" nonSpaceWrap="true" maxLines="1" justifyh="Center" justifyv="TOP">
+              <Size>
+                <AbsDimension x="600" y="2"/>
+              </Size>
+              <Anchors>
+                <Anchor point="TOPLEFT" relativeTo="$ChatFrameChannelButton" relativePoint="BOTTOMLEFT">
+                  <Offset>
+                    <AbsDimension x="0" y="-63"/>
+                  </Offset>
+                </Anchor>
+                <Anchor point="RIGHT">
+                  <Offset>
+                    <AbsDimension x="0" y="8"/>
+                  </Offset>
+                </Anchor>
+              </Anchors>
+            </FontString>
+            <FontString name="$autoCompleteSubText" text="When enabled type ':' to begin autocompleting emotes. Use (shift)tab or the arrow keys to change the selected suggestion. Apply the selected suggestion by typing ':' or by clicking a suggestion." inherits="GameFontHighlightSmall" nonSpaceWrap="true" maxLines="3" justifyh="LEFT" justifyv="TOP">
+              <Size>
+                <AbsDimension y="32" x="0"/>
+              </Size>
+              <Anchors>
+                <Anchor point="TOPLEFT" relativeTo="$parentTextfav" relativePoint="BOTTOMLEFT">
+                  <Offset>
+                    <AbsDimension x="0" y="-15"/>
+                  </Offset>
+                </Anchor>
+                <Anchor point="RIGHT">
+                  <Offset>
+                    <AbsDimension x="-32" y="0"/>
+                  </Offset>
+                </Anchor>
+              </Anchors>
+            </FontString>
+          </Layer>
+          <Layer level="BACKGROUND">
+            <Texture name="retete" file="Interface/CHATFRAME/UI-ChatFrame-BorderTop">
+              <Size>
+                <AbsDimension x="220" y="16"/>
+              </Size>
+              <Anchors>
+                <Anchor point="TOPLEFT">
+                  <Offset>
+                    <AbsDimension x="0" y="0"/>
+                  </Offset>
+                </Anchor>
+              </Anchors>
+            </Texture>
+          </Layer>
+          <Layer level="OVERLAY">
+            <Texture file="Interface/CHATFRAME/UI-ChatFrame-BorderTop">
+              <Size>
+                <AbsDimension x="220" y="16"/>
+              </Size>
+              <Anchors>
+                <Anchor point="TOPRIGHT"/>
+              </Anchors>
+            </Texture>
+          </Layer>
+        </Layers>
+      </Frame>
+
+      <CheckButton name="$autocompleteCheckButton" inherits="InterfaceOptionsCheckButtonTemplate">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$autoCompleteSubText" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="0"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            getglobal(self:GetName() .. "Text"):SetText("Autocomplete emotes");
+          </OnLoad>
+          <OnClick>
+            Emoticons_SetAutoComplete(self:GetChecked());
+          </OnClick>
+        </Scripts>
+      </CheckButton>
+
+      <CheckButton name="$autocompleteUseTabToComplete" inherits="InterfaceOptionsCheckButtonTemplate">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$autocompleteCheckButton" relativePoint="TOPRIGHT">
+            <Offset>
+              <AbsDimension x="157" y="0"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            getglobal(self:GetName() .. "Text"):SetText("Use tab to apply the selected suggestion instead.");
+          </OnLoad>
+          <OnClick>
+            Emoticons_SetConfirmWithTab(self:GetChecked());
+          </OnClick>
+        </Scripts>
+      </CheckButton>
+
+      <Button name="$parentShowStatsButton" inherits="UIPanelButtonTemplate" Text="Usage data">
+         <Size x="82" y="20"/>
+        <Anchors>
+          <Anchor point="TOPRIGHT" relativeTo="$parent" relativePoint="TOPRIGHT">
+            <Offset>
+              <AbsDimension x="-6" y="-6"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnClick>
+          HideUIPanel(InterfaceOptionsFrame);
+          HideUIPanel(GameMenuFrame);
+          TwitchStatsScreen_OnLoad();
+          </OnClick>
+        </Scripts>
+      </Button>
+
+      <Frame name="$ChatFrameChannelButton">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$optionsSection" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="-170"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Size>
+          <AbsDimension x="600" y="16" />
+        </Size>
+        <Layers>
+          <Layer level="ARTWORK">
+            <FontString name="$parentTextfav" text="Favourite List" inherits="GameFontNormal" nonSpaceWrap="true" maxLines="1" justifyh="Center" justifyv="TOP">
+              <Size>
+                <AbsDimension x="600" y="2"/>
+              </Size>
+              <Anchors>
+                <Anchor point="TOPLEFT" relativeTo="$ChatFrameChannelButton" relativePoint="BOTTOMLEFT">
+                  <Offset>
+                    <AbsDimension x="0" y="-152"/>
+                  </Offset>
+                </Anchor>
+                <Anchor point="RIGHT">
+                  <Offset>
+                    <AbsDimension x="0" y="8"/>
+                  </Offset>
+                </Anchor>
+              </Anchors>
+            </FontString>
+          </Layer>
+          <Layer level="BACKGROUND">
+            <Texture name="retete" file="Interface/CHATFRAME/UI-ChatFrame-BorderTop">
+              <Size>
+                <AbsDimension x="240" y="16"/>
+              </Size>
+              <Anchors>
+                <Anchor point="TOPLEFT">
+                  <Offset>
+                    <AbsDimension x="0" y="0"/>
+                  </Offset>
+                </Anchor>
+              </Anchors>
+            </Texture>
+          </Layer>
+          <Layer level="OVERLAY">
+            <Texture file="Interface/CHATFRAME/UI-ChatFrame-BorderTop">
+              <Size>
+                <AbsDimension x="240" y="16"/>
+              </Size>
+              <Anchors>
+                <Anchor point="TOPRIGHT"/>
+              </Anchors>
+            </Texture>
+          </Layer>
+        </Layers>
+      </Frame>
+    </Frames>
+  </Frame>
+
+  <Frame name="EmoticonMiniMapDropDown" inherits="UIDropDownMenuTemplate" id="1">
+    <Scripts>
+      <OnLoad>
+        local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
+	      LibDD:UIDropDownMenu_Initialize(self, Emoticons_LoadMiniMapDropdown, "MENU", 1);
+      </OnLoad>
+    </Scripts>
+  </Frame>
+</Ui>
