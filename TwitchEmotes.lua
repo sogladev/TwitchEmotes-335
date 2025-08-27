@@ -931,7 +931,12 @@ function Emoticons_OnHyperlinkEnter(frame, link, message, fontstring, ...)
 	local linkType, linkContent = link:match("^([^:]+):(.+)")
 	if (linkType) then
 		if (linkType == "tel") then
-            TwitchEmotes_HoverMessageInfo = fontstring.messageInfo;
+            -- WoTLK compatibility: fontstring might be nil
+            if fontstring and fontstring.messageInfo then
+                TwitchEmotes_HoverMessageInfo = fontstring.messageInfo;
+            else
+                TwitchEmotes_HoverMessageInfo = nil;
+            end
 
 			GameTooltip:SetOwner(frame, "ANCHOR_CURSOR");
 			GameTooltip:SetText(linkContent, 255, 210, 0);
