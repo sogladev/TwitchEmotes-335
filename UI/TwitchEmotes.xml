@@ -428,6 +428,26 @@ Revert PowaBarSliderTemplate to inherit from OptionsSliderTemplate if it's fixed
         </Scripts>
       </CheckButton>
 
+    <!-- Smart Sizing always enabled to avoid graphical glitches -->
+     <!-- 
+      <CheckButton name="$EnableSmartSizingButton" inherits="InterfaceOptionsCheckButtonTemplate">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$showClickableEmotesButton" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="0"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            getglobal(self:GetName() .. "Text"):SetText("Enable Smart Sizing");
+          </OnLoad>
+          <OnClick>
+            Emoticons_SetSmartSizing(self:GetChecked());
+          </OnClick>
+        </Scripts>
+      </CheckButton>
+    -->
 
       <Frame name="$AutoCompleteSettingsPanel">
         <Anchors>

@@ -29,6 +29,7 @@ Emoticons_Settings = {
     ["ENABLE_AUTOCOMPLETE"] = true,
     ["ENABLE_ANIMATEDEMOTES"] = true,
     ["AUTOCOMPLETE_CONFIRM_WITH_TAB"] = false,
+    ["ENABLE_SMART_SIZING"] = true,
     ["FAVEMOTES"] = {
         true, true, true, true, true, true, true, true, true, true, true, true,
         true, true, true, true, true, true, true, true, true, true, true, true,
@@ -61,12 +62,35 @@ local origsettings = {
 	["ENABLE_CLICKABLEEMOTES"] = true,
     ["ENABLE_AUTOCOMPLETE"] = true,
     ["ENABLE_ANIMATEDEMOTES"] = true,
+    ["ENABLE_SMART_SIZING"] = true,
     ["FAVEMOTES"] = {
         true, true, true, true, true, true, true, true, true, true, true, true,
         true, true, true, true, true, true, true, true, true, true, true, true,
         true, true, true
     }
 };
+
+-- WoTLK: Get smart dynamic emote size based on emote count (inspired by ChatEmojis)
+local function GetSmartEmoteSize(totalEmoteCount, baseSize)
+    -- baseSize: the nominal size for a single emote (defaults to 28 for normal emotes)
+    baseSize = baseSize or 28
+
+    if totalEmoteCount == 1 then
+        return baseSize
+    elseif totalEmoteCount == 2 then
+        return math.max(1, math.floor(baseSize * 0.875))
+    elseif totalEmoteCount == 3 then
+        return math.max(1, math.floor(baseSize * 0.75))
+    elseif totalEmoteCount <= 5 then
+        return math.max(1, math.floor(baseSize * 0.625))
+    elseif totalEmoteCount <= 8 then
+        return math.max(1, math.floor(baseSize * 0.5))
+    elseif totalEmoteCount <= 12 then
+        return math.max(1, math.floor(baseSize * 0.375))
+    else
+        return math.max(1, math.floor(baseSize * 0.25))
+    end
+end
 
 local TwitchEmotes_N_CHATFRAMES = 0;
 
@@ -458,14 +482,19 @@ function Emoticons_RenderSuggestionFN(text)
     if(fullEmotePath ~= nil) then
         local animdata = TwitchEmotes_animation_metadata[fullEmotePath]
         if animdata ~= nil then
-            return TwitchEmotes_BuildEmoteFrameStringWithDimensions(fullEmotePath, animdata, 0, 16, 16) .. text;
+            -- Use smart sizing for animated emotes in autocomplete (default to single emote size)
+            local smartSize = GetSmartEmoteSize(1)
+            return TwitchEmotes_BuildEmoteFrameStringWithDimensions(fullEmotePath, animdata, 0, smartSize, smartSize) .. text;
         else
+            -- Use smart sizing for static emotes in autocomplete too
+            local smartSize = GetSmartEmoteSize(1)
+            local smartSizeStr = smartSize .. ":" .. smartSize
             local size = string.match(fullEmotePath, ":(.*)")
             local path_and_size = "";
             if(size ~= nil) then
-                path_and_size = string.gsub(fullEmotePath, size, "16:16")
+                path_and_size = string.gsub(fullEmotePath, size, smartSizeStr)
             else
-                path_and_size = fullEmotePath .. "16:16";
+                path_and_size = fullEmotePath .. smartSizeStr;
             end
             return "|T".. path_and_size .."|t " .. text;
         end
@@ -510,6 +539,11 @@ function Emoticons_OptionsWindow_OnShow(self)
     local autocompleteTabButton = _G["$autocompleteUseTabToComplete"]
     if autocompleteTabButton and Emoticons_Settings["AUTOCOMPLETE_CONFIRM_WITH_TAB"] then
         autocompleteTabButton:SetChecked(true);
+    end
+
+    local smartSizingButton = _G["$EnableSmartSizingButton"]
+    if smartSizingButton and Emoticons_Settings["ENABLE_SMART_SIZING"] then
+        smartSizingButton:SetChecked(true);
     end
 
     -- Set tooltip
@@ -592,8 +626,36 @@ function Emoticons_OptionsWindow_OnShow(self)
 end
 
 function Emoticons_RunReplacement(msg, senderGUID, msgID)
+    if not msg or msg == "" then return msg end
+    
+    -- Skip processing for script commands
+    if string.find(msg, "/run") or string.find(msg, "/dump") or string.find(msg, "/script") then
+        return msg
+    end
+    
+    -- Count total emotes in the message first for dynamic sizing
+    local totalEmoteCount = 0
+    local delimiters = "%s,'<>?-%.!"
+    
+    for word in string.gmatch(msg, "[^" .. delimiters .. "]+") do
+        local emote = TwitchEmotes_emoticons[word]
+        if emote and TwitchEmotes_defaultpack[emote] then
+            totalEmoteCount = totalEmoteCount + 1
+        end
+    end
+    
+    if totalEmoteCount == 0 then
+        return msg -- No emotes to process
+    end
+    
+    -- Decide whether to use smart sizing. We pass the emote count down and compute
+    -- per-emote dimensions (preserving aspect ratios) inside the inserter.
+    local smartCount = nil
+    if Emoticons_Settings["ENABLE_SMART_SIZING"] then
+        smartCount = totalEmoteCount
+    end
+    
     -- remember to watch out for |H|h|h's
-
     local outstr = "";
     local origlen = #msg;
     local startpos = 1;
@@ -605,15 +667,15 @@ function Emoticons_RunReplacement(msg, senderGUID, msgID)
         local link = string.sub(msg, linkStart, linkEnd)
 
         if startpos < linkStart then
-            outstr = outstr .. Emoticons_InsertEmoticons(string.sub(msg, startpos, linkStart - 1), senderGUID, msgID); -- the bit before the current link
-    end
+            outstr = outstr .. Emoticons_InsertEmoticonsWithSize(string.sub(msg, startpos, linkStart - 1), senderGUID, msgID, smartCount); -- the bit before the current link
+        end
         outstr = outstr .. link -- don't run replacement on the link, just add it to the return string
         startpos = linkEnd + 1
     
         linkStart, linkEnd = string.find(msg, "%[.+-.+%]+", startpos) -- find next link
     end
 
-    outstr = outstr .. Emoticons_InsertEmoticons(string.sub(msg, startpos, #msg), senderGUID, msgID); -- the bit after the last link (or the whole message when no links found)
+    outstr = outstr .. Emoticons_InsertEmoticonsWithSize(string.sub(msg, startpos, #msg), senderGUID, msgID, smartCount); -- the bit after the last link (or the whole message when no links found)
 
     return outstr;
 end
@@ -655,6 +717,10 @@ end
 
 function Emoticons_EnableAnimatedEmotes(state)
     Emoticons_Settings["ENABLE_ANIMATEDEMOTES"] = state;
+end
+
+function Emoticons_SetSmartSizing(state)
+    Emoticons_Settings["ENABLE_SMART_SIZING"] = state;
 end
 
 function TwitchEmotes_Update(self, elapsed)
@@ -765,7 +831,9 @@ function UpdateEmoteStats(emote, nrTimesAutoCompleted, nrTimesSent, nrTimesSeen)
 end
 
 local lastmsgID = -1;
-function Emoticons_InsertEmoticons(msg, senderGUID, msgID)
+
+-- WoTLK: New function with smart sizing support
+function Emoticons_InsertEmoticonsWithSize(msg, senderGUID, msgID, smartCount)
     local normal = '28:28'
     local large = '64:64'
     local xlarge = '128:128'
@@ -797,24 +865,63 @@ function Emoticons_InsertEmoticons(msg, senderGUID, msgID)
             local animdata = TwitchEmotes_GetAnimData(path);
             
             if(animdata == nil) then
-                -- Check if the user has large emotes enabled. 
-                -- If not, replace the size with the standard size of 28:28,
-                -- else set it to the standard large size of 64:64
-                if not Emoticons_Settings["LARGEEMOTES"] then
-                    if ( size == 'LARGE' or size == 'XLARGE' or size == 'XXLARGE' ) then
-                        path_and_size = string.gsub(TwitchEmotes_defaultpack[emote], size, normal)
-                    end
-                else
-                    if ( size == 'LARGE' ) then
-                        path_and_size = string.gsub(TwitchEmotes_defaultpack[emote], size, large)
-                    elseif ( size == 'XLARGE' ) then
-                        path_and_size = string.gsub(TwitchEmotes_defaultpack[emote], size, xlarge)
-                    elseif ( size == 'XXLARGE') then
-                        path_and_size = string.gsub(TwitchEmotes_defaultpack[emote], size, xxlarge)
+                -- WoTLK: Use smart sizing if provided. For special tokens (LARGE/XLARGE/XXLARGE)
+                -- apply the smart scale relative to their base large size so they remain
+                -- proportionally larger than normal emotes.
+                if size ~= nil then
+                    -- numeric size like '28:112' (width:height)?
+                    local w,h = string.match(size, "^(%d+):(%d+)$")
+                    if w and h then
+                        w = tonumber(w); h = tonumber(h)
+                        if smartCount then
+                            -- compute scaled height based on smartCount using original height as base
+                            local scaledH = GetSmartEmoteSize(smartCount, h)
+                            local scaleFactor = scaledH / h
+                            local scaledW = math.max(1, math.floor(w * scaleFactor))
+                            path_and_size = path .. ":" .. scaledW .. ":" .. scaledH
+                        else
+                            -- keep original numeric dimensions
+                            path_and_size = path_and_size
+                        end
+                    else
+                        -- non-numeric token (LARGE/XLARGE/XXLARGE or unspecified)
+                        if smartCount then
+                            local base = 28
+                            if size == 'LARGE' then
+                                base = 64
+                            elseif size == 'XLARGE' then
+                                base = 128
+                            elseif size == 'XXLARGE' then
+                                base = 256
+                            end
+                            local scaled = GetSmartEmoteSize(smartCount, base)
+                            path_and_size = path .. ":" .. scaled .. ":" .. scaled
+                        else
+                            -- No smartCount provided: fall back to the original LARGEEMOTES behavior
+                            if not Emoticons_Settings["LARGEEMOTES"] then
+                                if ( size == 'LARGE' or size == 'XLARGE' or size == 'XXLARGE' ) then
+                                    path_and_size = string.gsub(TwitchEmotes_defaultpack[emote], size, normal)
+                                end
+                            else
+                                if ( size == 'LARGE' ) then
+                                    path_and_size = string.gsub(TwitchEmotes_defaultpack[emote], size, large)
+                                elseif ( size == 'XLARGE' ) then
+                                    path_and_size = string.gsub(TwitchEmotes_defaultpack[emote], size, xlarge)
+                                elseif ( size == 'XXLARGE') then
+                                    path_and_size = string.gsub(TwitchEmotes_defaultpack[emote], size, xxlarge)
+                                end
+                            end
+                        end
                     end
                 end
             else 
-                path_and_size = TwitchEmotes_BuildEmoteFrameString(path, animdata, 0):gsub("|T", ""):gsub("|t", "");
+                -- Animated emotes: apply smart sizing based on animation frame height
+                local animBase = (animdata.frameHeight and animdata.frameHeight) or (animdata.frameWidth and animdata.frameWidth) or 28
+                local finalSize = animBase
+                if smartCount then
+                    finalSize = GetSmartEmoteSize(smartCount, animBase)
+                end
+                path_and_size = TwitchEmotes_BuildEmoteFrameStringWithDimensions(path, animdata, 0, finalSize, finalSize):gsub("|T", ""):gsub("|t", "")
             end
             
 
@@ -846,6 +953,11 @@ function Emoticons_InsertEmoticons(msg, senderGUID, msgID)
 
     lastmsgID = msgID; -- we only save stats of unique messages (this function is called multiple times per message, for each chat frame)
     return msg;
+end
+
+function Emoticons_InsertEmoticons(msg, senderGUID, msgID)
+    -- Legacy function - use new function without smart sizing for backward compatibility
+    return Emoticons_InsertEmoticonsWithSize(msg, senderGUID, msgID, nil)
 end
 
 local oldsethyperlink = ItemRefTooltip.SetHyperlink

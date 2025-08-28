@@ -14,7 +14,8 @@ function TwitchEmotesAnimator_OnUpdate(self, elapsed)
                     if region and region:GetObjectType() == "FontString" then
                         local text = region:GetText()
                         if text and string.find(text, "|TInterface\\AddOns\\TwitchEmotes\\Emotes") then
-                            TwitchEmotesAnimator_UpdateEmoteInFontString(region, 28, 28);
+                            -- Preserve smart sizing
+                            TwitchEmotesAnimator_UpdateEmoteInFontString(region, nil, nil);
                         end
                     end
                 end
@@ -27,7 +28,8 @@ function TwitchEmotesAnimator_OnUpdate(self, elapsed)
             for i = 1, EditBoxAutoCompleteBox.existingButtonCount do
                 local cBtn = EditBoxAutoComplete_GetAutoCompleteButton(i);
                 if (cBtn:IsVisible()) then
-                    TwitchEmotesAnimator_UpdateEmoteInFontString(cBtn, 16, 16);
+                    -- Preserve smart sizing
+                    TwitchEmotesAnimator_UpdateEmoteInFontString(cBtn, nil, nil);
                 else
                     break
                 end
@@ -106,15 +108,15 @@ function TwitchEmotesAnimator_UpdateEmoteInFontString(fontstring, widthOverride,
             if (animdata ~= nil) then
                 local framenum = TwitchEmotes_GetCurrentFrameNum(animdata);
                 local nTxt;
-                if(widthOverride ~= nil or heightOverride ~= nil) then
-                    nTxt = txt:gsub(escpattern(emoteTextureString),
-                                        TwitchEmotes_BuildEmoteFrameStringWithDimensions(
-                                        imagepath, animdata, framenum, widthOverride, heightOverride))
-                else
-                    nTxt = txt:gsub(escpattern(emoteTextureString),
-                                      TwitchEmotes_BuildEmoteFrameString(
-                                        imagepath, animdata, framenum))
-                end
+                
+                -- Extract existing dimensions from the emote string to preserve smart sizing
+                local existingWidth, existingHeight = emoteTextureString:match("|T.-:(%d+):(%d+):")
+                local finalWidth = widthOverride or (existingWidth and tonumber(existingWidth)) or 24
+                local finalHeight = heightOverride or (existingHeight and tonumber(existingHeight)) or 24
+                
+                nTxt = txt:gsub(escpattern(emoteTextureString),
+                                    TwitchEmotes_BuildEmoteFrameStringWithDimensions(
+                                    imagepath, animdata, framenum, finalWidth, finalHeight))
 
                 -- If we're updating a chat message we need to alter the messageInfo as wel
                 if (fontstring.messageInfo ~= nil) then
