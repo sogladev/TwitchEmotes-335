@@ -2,6 +2,7 @@
 -- local VERSION = 1;
 -- local AceGUI;
 local maximumButtonCount = 5;
+local autoCompleteButtonSpacing = 8; -- Vertical spacing between autocomplete buttons in pixels
 
 -- TODO: Before pullrequesting to the LibEditbox-Autocomplete repo reimplement AceGUI-3.0 support
 -- if LibStub then
@@ -254,7 +255,7 @@ function EditBoxAutoComplete_GetAutoCompleteButton(index)
         local btn = CreateFrame("Button", buttonName, EditBoxAutoCompleteBox,
                                 "EditBoxAutoCompleteButtonTemplate")
         btn:SetPoint("TOPLEFT", EditBoxAutoComplete_GetAutoCompleteButton(index - 1), "BOTTOMLEFT",
-                     0, 0)
+                     0, -autoCompleteButtonSpacing)
         btn:SetScript("OnEnter", function(self)
             EditBoxAutoCompleteBox.mouseInside = true;
         end)
@@ -359,7 +360,9 @@ function EditBoxAutoComplete_Update(parent, text, cursorPosition)
             self.parentArrows = parent:GetAltArrowKeyMode();
         end
         parent:SetAltArrowKeyMode(false);
-        local height = EditBoxAutoComplete_GetAutoCompleteButton(1):GetHeight() * maximumButtonCount
+        -- Calculate height including spacing between buttons
+        local totalSpacing = (maximumButtonCount - 1) * autoCompleteButtonSpacing
+        local height = EditBoxAutoComplete_GetAutoCompleteButton(1):GetHeight() * maximumButtonCount + totalSpacing
         if (parent:GetBottom() - height <= (AUTOCOMPLETE_DEFAULT_Y_OFFSET + 10)) then -- 10 is a magic number from the offset of AutoCompleteButton1.
             attachPoint = "ABOVE";
         else
@@ -503,7 +506,9 @@ function EditBoxAutoComplete_UpdateResults(self, results, indexOffset)
 
     if (numReturns > 0) then
         maxWidth = max(maxWidth, AutoCompleteInstructions:GetStringWidth() + 30);
-        self:SetHeight(numReturns * AutoCompleteButton1:GetHeight() + 35);
+        -- Add spacing between buttons: numReturns * buttonHeight + (numReturns - 1) * spacing + base padding
+        local totalSpacing = (numReturns - 1) * autoCompleteButtonSpacing
+        self:SetHeight(numReturns * AutoCompleteButton1:GetHeight() + totalSpacing + 35);
         self:SetWidth(maxWidth);
         self:Show();
         EditBoxAutoComplete_SetSelectedIndex(self, 1);
