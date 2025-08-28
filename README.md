@@ -26,6 +26,7 @@ This port adapts the popular retail addon for WotLK 3.3.5a legacy servers, maint
 - Compatible with WotLK 3.3.5a interface version (30300)
 - Smart sizing to scale emotes to avoid graphical glitches when using multiple at once
 - Uses legacy-compatible libraries and API calls
+- WIM 3.3.7 support only works if WIM's Emote feature is disabled: `/wim -> General: Message Formatting -> uncheck "Display Emoticons"`
 
 ### AutoComplete notes
 
@@ -44,6 +45,20 @@ Type emote names in chat as you would on Twitch (e.g., `OMEGALUL`, `Pepega`, `fo
 **Minimap Integration:** Click the minimap button for emote previews, or Shift-click to open statistics page.
 
 **Interactive Emotes:** Hover over emotes to see their names, or Shift-click to repost them in your chat.
+
+## WIM (WoW Instant Messenger) Support
+
+TwitchEmotes-335 includes full support for WIM 3.3.7. However, **WIM's built-in emoticon system must be disabled** for TwitchEmotes to work properly.
+
+**To enable TwitchEmotes support in WIM:**
+
+1. Open WIM settings: `/wim`
+2. Navigate to **General** → **Message Formatting**
+3. **Uncheck "Display Emoticons"**
+
+![WIM Support Configuration](docs/img/wim_support.jpg)
+
+*With WIM's emoticons disabled, TwitchEmotes will handle all emote processing in whisper windows, including full animation support.*
 
 ## Credits
 
