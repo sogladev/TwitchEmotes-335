@@ -53,7 +53,7 @@ function TwitchStatsScreen_OnLoad()
         } 
     })
 
-    TwitchStatsScreen.closeButton = CreateFrame('Button', "TwitchStatsCloseButton", TwitchStatsScreen, 'UIPanelCloseButtonNoScripts')
+    TwitchStatsScreen.closeButton = CreateFrame('Button', "TwitchStatsCloseButton", TwitchStatsScreen, 'UIPanelCloseButton')
 	TwitchStatsScreen.closeButton:SetScript('OnClick', function() TwitchStatsScreen:Hide() end)
 	TwitchStatsScreen.closeButton:SetPoint('TOPRIGHT', 0, 2)
 

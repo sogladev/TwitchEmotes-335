@@ -9,7 +9,7 @@
     <NormalFont style="GameFontHighlightLeft"/>
   </Button>
 
-  <Frame name="TwitchStatsScreen" hidden="true" parent="UIParent" inherits="BackdropTemplate" enableMouse="true" movable="true">
+  <Frame name="TwitchStatsScreen" hidden="true" parent="UIParent" enableMouse="true" movable="true">
     <Size>
       <AbsDimension x="512" y="504"/>
     </Size>
