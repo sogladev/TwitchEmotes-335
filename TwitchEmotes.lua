@@ -617,8 +617,8 @@ function Emoticons_OptionsWindow_OnShow(self)
     favnone = CreateFrame("CheckButton", "favnone_GlobalName",
                           favall_GlobalName, "UIRadioButtonTemplate");
 
-    favframe = CreateFrame("Frame", "favframe_GlobalName", favall_GlobalName);
-    favframe:SetPoint("TOPLEFT", 0, -100);
+    favframe = CreateFrame("Frame", "favframe_GlobalName", EmoticonsOptionsControlsPanel);
+    favframe:SetPoint("TOPLEFT", 17, -364);
     favframe:SetSize(590, 175);
 
     first = true;
