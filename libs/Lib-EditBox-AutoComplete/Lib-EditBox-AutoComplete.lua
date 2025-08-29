@@ -53,7 +53,7 @@ function SetupAutoComplete(editbox, valueList, maxButtonCount, settings)
         interceptOnEnterPressed = false,
         addSpace = false,
         useTabToConfirm = false,
-        useArrowButtons = false
+        useArrowButtons = false,
     }
 
     editbox.settings = defaultsettings;
@@ -99,16 +99,32 @@ function SetupAutoComplete(editbox, valueList, maxButtonCount, settings)
                 end
             end
 
-            if key == "ENTER" then
-                EditBoxAutoComplete_OnEnterPressed(editbox)
+            -- Intercept ENTER if configured to do so. If a suggestion was applied,
+            -- stop propagation so the original handler doesn't send the message.
+            if key == "ENTER" and editbox.settings and editbox.settings.interceptOnEnterPressed then
+                local text = editbox:GetText() or ""
+                -- If this is a slash command, don't intercept; allow the default
+                -- OnEnterPressed (Blizzard secure handler) to run to avoid taint.
+                if string.sub(text, 1, 1) == "/" then
+                    return
+                end
+
+                if EditBoxAutoComplete_OnEnterPressed(editbox) then
+                    return
+                end
             end
 
+            -- Handle arrow keys (up/down) for cycling suggestions. When handled,
+            -- pause ElvUI history and return early to avoid forwarding the key.
             if EditBoxAutoComplete_OnArrowPressed(editbox, key) then
                 TwitchEmotesPauseElvUIHistory(editbox);
-            else
-                if editbox.old_OnKeyDown ~= nil then
-                    editbox.old_OnKeyDown(editbox, key)
-                end
+                return
+            end
+
+            -- For all other keys (or if not handled above) forward to the original
+            -- OnKeyDown handler so other addons / default behavior still run.
+            if editbox.old_OnKeyDown ~= nil then
+                editbox.old_OnKeyDown(editbox, key)
             end
 
         end);
@@ -120,6 +136,38 @@ function SetupAutoComplete(editbox, valueList, maxButtonCount, settings)
 
     editbox:HookScript("OnChar", function(editbox, char)
 
+        -- Vim-like Shift+H / Shift+J / Shift+K / Shift+L navigation: only active when
+        -- the autocomplete popup is shown and attached to this editbox.
+        local autoComplete = EditBoxAutoCompleteBox
+        if autoComplete:IsShown() and autoComplete.parent == editbox and
+            (char == 'J' or char == 'K' or char == 'L' or char == 'H') then
+            -- Remove the inserted uppercase char so it doesn't appear in the editbox
+            local text = editbox:GetText() or ""
+            local pos = editbox:GetCursorPosition() or #text
+            -- pos is the cursor position after insertion; remove the character before cursor
+            if pos > 0 then
+                local before = string.sub(text, 1, pos - 1)
+                local after = string.sub(text, pos + 1)
+                local newText = before .. after
+                editbox:SetText(newText)
+                -- restore cursor position
+                editbox:SetCursorPosition(pos - 1)
+            end
+
+            if char == 'J' then
+                -- down
+                EditBoxAutoComplete_IncrementSelection(editbox, false)
+            elseif char == 'K' then
+                -- up
+                EditBoxAutoComplete_IncrementSelection(editbox, true)
+            elseif char == 'L' then
+                -- 'L' - accept suggestion
+                EditBoxAutoComplete_OnEnterPressed(editbox)
+            end
+
+            return
+        end
+
         if (char == editbox.settings.closingChar and
             editbox:GetUTF8CursorPosition() == #editbox:GetText() and
             editbox:GetUTF8CursorPosition() > 1) then
@@ -130,6 +178,29 @@ function SetupAutoComplete(editbox, valueList, maxButtonCount, settings)
         end
 
     end)
+
+    -- WARNING: replacing OnEnterPressed on Blizzard chat editboxes can taint secure handlers and break slash-commands
+    if editbox.settings and editbox.settings.interceptOnEnterPressed then
+        editbox:SetScript("OnEnterPressed", function(editbox)
+            local autoComplete = EditBoxAutoCompleteBox
+            local text = editbox:GetText() or ""
+
+            if autoComplete:IsShown() and autoComplete.parent == editbox then
+                 if string.sub(text, 1, 1) == "/" then
+                --     if editbox.old_OnEnterPressed then editbox.old_OnEnterPressed(editbox) end
+                     return
+                 end
+
+                if EditBoxAutoComplete_OnEnterPressed(editbox) then
+                    -- suggestion applied, swallow enter
+                    return
+                end
+            end
+
+            -- Otherwise call the original handler to preserve default behavior.
+            if editbox.old_OnEnterPressed then editbox.old_OnEnterPressed(editbox) end
+        end)
+    end
 
     editbox:SetScript("OnEditFocusLost", function(editbox)
         if not EditBoxAutoCompleteBox.mouseInside then

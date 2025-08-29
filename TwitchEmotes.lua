@@ -29,6 +29,7 @@ Emoticons_Settings = {
     ["ENABLE_AUTOCOMPLETE"] = true,
     ["ENABLE_ANIMATEDEMOTES"] = true,
     ["AUTOCOMPLETE_CONFIRM_WITH_TAB"] = false,
+    ["AUTOCOMPLETE_CONFIRM_WITH_ENTER"] = false,
     ["ENABLE_SMART_SIZING"] = true,
     ["FAVEMOTES"] = {
         true, true, true, true, true, true, true, true, true, true, true, true,
@@ -63,6 +64,7 @@ local origsettings = {
     ["ENABLE_AUTOCOMPLETE"] = true,
     ["ENABLE_ANIMATEDEMOTES"] = true,
     ["ENABLE_SMART_SIZING"] = true,
+    ["AUTOCOMPLETE_CONFIRM_WITH_ENTER"] = false,
     ["FAVEMOTES"] = {
         true, true, true, true, true, true, true, true, true, true, true, true,
         true, true, true, true, true, true, true, true, true, true, true, true,
@@ -430,7 +432,7 @@ function Emoticons_OnEvent(self, event, ...)
                     end
                     return 0;
                 end,
-                interceptOnEnterPressed = true,
+                interceptOnEnterPressed = Emoticons_Settings["AUTOCOMPLETE_CONFIRM_WITH_ENTER"],
                 addSpace = true,
                 useTabToConfirm = Emoticons_Settings["AUTOCOMPLETE_CONFIRM_WITH_TAB"],
                 useArrowButtons = true,
@@ -541,6 +543,11 @@ function Emoticons_OptionsWindow_OnShow(self)
         autocompleteTabButton:SetChecked(true);
     end
 
+    local autocompleteEnterButton = _G["$autocompleteConfirmWithEnter"]
+    if autocompleteEnterButton and Emoticons_Settings["AUTOCOMPLETE_CONFIRM_WITH_ENTER"] then
+        autocompleteEnterButton:SetChecked(true);
+    end
+
     local smartSizingButton = _G["$EnableSmartSizingButton"]
     if smartSizingButton and Emoticons_Settings["ENABLE_SMART_SIZING"] then
         smartSizingButton:SetChecked(true);
@@ -549,6 +556,9 @@ function Emoticons_OptionsWindow_OnShow(self)
     -- Set tooltip
     if autocompleteTabButton then
         autocompleteTabButton.tooltipText = "This will disable cycling the selected suggestion with tab, the arrow keys will still work.";
+    end
+    if autocompleteEnterButton then
+        autocompleteEnterButton.tooltipText = "Enabling this may cause 'addon-has-been-blocked-from-an-action-only-available-to-the-blizzard-ui' taint errors; disable if you see those errors.";
     end
 
     favall = CreateFrame("CheckButton", "favall_GlobalName",
@@ -577,7 +587,7 @@ function Emoticons_OptionsWindow_OnShow(self)
                           favall_GlobalName, "UIRadioButtonTemplate");
 
     favframe = CreateFrame("Frame", "favframe_GlobalName", favall_GlobalName);
-    favframe:SetPoint("TOPLEFT", 0, -24);
+    favframe:SetPoint("TOPLEFT", 0, -100);
     favframe:SetSize(590, 175);
 
     first = true;
@@ -707,6 +717,18 @@ function Emoticons_SetConfirmWithTab(state)
     end
 end
 
+function Emoticons_SetConfirmWithEnter(state)
+    Emoticons_Settings["AUTOCOMPLETE_CONFIRM_WITH_ENTER"] = state;
+    for _, frameName in pairs(CHAT_FRAMES) do
+        local frame = _G[frameName]
+
+        local editbox = frame.editBox;
+        if editbox ~= nil and editbox.settings ~= nil then
+            editbox.settings.interceptOnEnterPressed = Emoticons_Settings["AUTOCOMPLETE_CONFIRM_WITH_ENTER"];
+        end
+    end
+end
+
 function Emoticons_SetLargeEmotes(state)
     Emoticons_Settings["LARGEEMOTES"] = state;
 end
@@ -800,7 +822,7 @@ function Emoticons_SetAutoComplete(state)
                     end
                     return 0;
                 end,
-                interceptOnEnterPressed = true,
+                interceptOnEnterPressed = Emoticons_Settings["AUTOCOMPLETE_CONFIRM_WITH_ENTER"],
                 addSpace = true,
                 useTabToConfirm = Emoticons_Settings["AUTOCOMPLETE_CONFIRM_WITH_TAB"],
                 useArrowButtons = true,

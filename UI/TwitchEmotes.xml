@@ -552,10 +552,28 @@ Revert PowaBarSliderTemplate to inherit from OptionsSliderTemplate if it's fixed
         </Anchors>
         <Scripts>
           <OnLoad>
-            getglobal(self:GetName() .. "Text"):SetText("Use tab to apply the selected suggestion instead.");
+            getglobal(self:GetName() .. "Text"):SetText("Use Tab to apply the selected suggestion.");
           </OnLoad>
           <OnClick>
             Emoticons_SetConfirmWithTab(self:GetChecked());
+          </OnClick>
+        </Scripts>
+      </CheckButton>
+
+      <CheckButton name="$autocompleteConfirmWithEnter" inherits="InterfaceOptionsCheckButtonTemplate">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$autocompleteUseTabToComplete" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="0"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            getglobal(self:GetName() .. "Text"):SetText("Use Enter to apply the selected suggestion. (Requires /reload)");
+          </OnLoad>
+          <OnClick>
+            Emoticons_SetConfirmWithEnter(self:GetChecked());
           </OnClick>
         </Scripts>
       </CheckButton>
@@ -582,7 +600,7 @@ Revert PowaBarSliderTemplate to inherit from OptionsSliderTemplate if it's fixed
         <Anchors>
           <Anchor point="TOPLEFT" relativeTo="$optionsSection" relativePoint="BOTTOMLEFT">
             <Offset>
-              <AbsDimension x="0" y="-170"/>
+              <AbsDimension x="0" y="-180"/>
             </Offset>
           </Anchor>
         </Anchors>
@@ -598,7 +616,7 @@ Revert PowaBarSliderTemplate to inherit from OptionsSliderTemplate if it's fixed
               <Anchors>
                 <Anchor point="TOPLEFT" relativeTo="$ChatFrameChannelButton" relativePoint="BOTTOMLEFT">
                   <Offset>
-                    <AbsDimension x="0" y="-152"/>
+                    <AbsDimension x="0" y="-162"/>
                   </Offset>
                 </Anchor>
                 <Anchor point="RIGHT">
