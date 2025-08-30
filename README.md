@@ -18,6 +18,7 @@ This port adapts the popular retail addon for WotLK 3.3.5a legacy servers, maint
 - [x] Minimap integration with dropdown preview
 - [x] Auto-completion with Tab/Shift-Tab navigation
 - [ ] Auto-completion with Arrow key navigation
+- [ ] Error-free completion with Enter
 - [x] Statistics page (Shift-click minimap)
 - [x] Hover tooltips and Shift-click to repost emotes
 - [x] Animated emotes
@@ -33,6 +34,7 @@ This port adapts the popular retail addon for WotLK 3.3.5a legacy servers, maint
 - Up/Down arrows can't be used to cycle suggestions.
 - Pressing Enter to confirm is disabled by default. If enabled, confirming with Enter may cause the client to produce an error such as `"addon-has-been-blocked-from-an-action-only-available-to-the-blizzard-ui"`. For example, `/target` when typed in chat is blocked; Use through macros still works.
 - As an alternative, Shift+J (next), Shift+K (previous), Shift+L (accept) are used for navigation.
+   Note: Shift+J/K/L (Vim-style) navigation is optional and can be enabled in the addon options (Autocomplete settings)
 
 *For detailed technical changes made to ensure 3.3.5a compatibility, see the git commit history which documents all adaptations from the original retail version.*
 
@@ -41,6 +43,7 @@ This port adapts the popular retail addon for WotLK 3.3.5a legacy servers, maint
 Type emote names in chat as you would on Twitch (e.g., `OMEGALUL`, `Pepega`, `forsenE`).
 
 **Auto-completion:** Type a colon `:` prefix to open a dropdown with all available emotes. Use Tab/Shift-Tab to navigate, hit colon again to select, or Enter to quick send.
+Shift+J/K/L navigation is available as an option in the Autocomplete settings
 
 **Minimap Integration:** Click the minimap button for emote previews, or Shift-click to open statistics page.
 

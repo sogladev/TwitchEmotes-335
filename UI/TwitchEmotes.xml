@@ -546,7 +546,7 @@ Revert PowaBarSliderTemplate to inherit from OptionsSliderTemplate if it's fixed
         <Anchors>
           <Anchor point="TOPLEFT" relativeTo="$autocompleteCheckButton" relativePoint="TOPRIGHT">
             <Offset>
-              <AbsDimension x="157" y="0"/>
+              <AbsDimension x="172" y="0"/>
             </Offset>
           </Anchor>
         </Anchors>
@@ -574,6 +574,24 @@ Revert PowaBarSliderTemplate to inherit from OptionsSliderTemplate if it's fixed
           </OnLoad>
           <OnClick>
             Emoticons_SetConfirmWithEnter(self:GetChecked());
+          </OnClick>
+        </Scripts>
+      </CheckButton>
+
+      <CheckButton name="$autocompleteUseVimKeys" inherits="InterfaceOptionsCheckButtonTemplate">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$autocompleteCheckButton" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="0"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            getglobal(self:GetName() .. "Text"):SetText("Enable Shift+J/K/L navigation");
+          </OnLoad>
+          <OnClick>
+            Emoticons_SetConfirmWithVim(self:GetChecked());
           </OnClick>
         </Scripts>
       </CheckButton>

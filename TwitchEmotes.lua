@@ -30,6 +30,7 @@ Emoticons_Settings = {
     ["ENABLE_ANIMATEDEMOTES"] = true,
     ["AUTOCOMPLETE_CONFIRM_WITH_TAB"] = false,
     ["AUTOCOMPLETE_CONFIRM_WITH_ENTER"] = false,
+    ["AUTOCOMPLETE_USE_VIM_KEYS"] = false,
     ["ENABLE_SMART_SIZING"] = true,
     ["FAVEMOTES"] = {
         true, true, true, true, true, true, true, true, true, true, true, true,
@@ -65,6 +66,7 @@ local origsettings = {
     ["ENABLE_ANIMATEDEMOTES"] = true,
     ["ENABLE_SMART_SIZING"] = true,
     ["AUTOCOMPLETE_CONFIRM_WITH_ENTER"] = false,
+    ["AUTOCOMPLETE_USE_VIM_KEYS"] = false,
     ["FAVEMOTES"] = {
         true, true, true, true, true, true, true, true, true, true, true, true,
         true, true, true, true, true, true, true, true, true, true, true, true,
@@ -433,6 +435,7 @@ function Emoticons_OnEvent(self, event, ...)
                     return 0;
                 end,
                 interceptOnEnterPressed = Emoticons_Settings["AUTOCOMPLETE_CONFIRM_WITH_ENTER"],
+                useVimNavigation = Emoticons_Settings["AUTOCOMPLETE_USE_VIM_KEYS"],
                 addSpace = true,
                 useTabToConfirm = Emoticons_Settings["AUTOCOMPLETE_CONFIRM_WITH_TAB"],
                 useArrowButtons = true,
@@ -548,6 +551,11 @@ function Emoticons_OptionsWindow_OnShow(self)
         autocompleteEnterButton:SetChecked(true);
     end
 
+    local autocompleteVimButton = _G["$autocompleteUseVimKeys"]
+    if autocompleteVimButton and Emoticons_Settings["AUTOCOMPLETE_USE_VIM_KEYS"] then
+        autocompleteVimButton:SetChecked(true);
+    end
+
     local smartSizingButton = _G["$EnableSmartSizingButton"]
     if smartSizingButton and Emoticons_Settings["ENABLE_SMART_SIZING"] then
         smartSizingButton:SetChecked(true);
@@ -559,6 +567,29 @@ function Emoticons_OptionsWindow_OnShow(self)
     end
     if autocompleteEnterButton then
         autocompleteEnterButton.tooltipText = "Enabling this may cause 'addon-has-been-blocked-from-an-action-only-available-to-the-blizzard-ui' taint errors; disable if you see those errors.";
+    end
+
+    -- Dynamic helper text for the Autocomplete section: reflect current option states
+    local autoCompleteSubText = _G["$autoCompleteSubText"]
+    if autoCompleteSubText then
+        local parts = {}
+        table.insert(parts, "When enabled type ':' to begin autocompleting emotes.")
+
+        if Emoticons_Settings["AUTOCOMPLETE_CONFIRM_WITH_TAB"] then
+            table.insert(parts, "Use Tab to apply the selected suggestion.")
+        else
+            table.insert(parts, "Use Tab/Shift-Tab or the arrow keys to change the selected suggestion.")
+        end
+
+        if Emoticons_Settings["AUTOCOMPLETE_USE_VIM_KEYS"] then
+            table.insert(parts, "Vim-style keys available: Shift+J/K to cycle, Shift+L to accept (opt-in).")
+        end
+
+        if Emoticons_Settings["AUTOCOMPLETE_CONFIRM_WITH_ENTER"] then
+            table.insert(parts, "Enter will also apply the selected suggestion (opt-in).")
+        end
+
+        autoCompleteSubText:SetText(table.concat(parts, " "))
     end
 
     favall = CreateFrame("CheckButton", "favall_GlobalName",
@@ -713,6 +744,18 @@ function Emoticons_SetConfirmWithTab(state)
         local editbox = frame.editBox;
         if editbox ~= nil and editbox.settings ~= nil then
             editbox.settings.useTabToConfirm = Emoticons_Settings["AUTOCOMPLETE_CONFIRM_WITH_TAB"];
+        end
+    end
+end
+
+function Emoticons_SetConfirmWithVim(state)
+    Emoticons_Settings["AUTOCOMPLETE_USE_VIM_KEYS"] = state;
+    for _, frameName in pairs(CHAT_FRAMES) do
+        local frame = _G[frameName]
+
+        local editbox = frame.editBox;
+        if editbox ~= nil and editbox.settings ~= nil then
+            editbox.settings.useVimNavigation = Emoticons_Settings["AUTOCOMPLETE_USE_VIM_KEYS"];
         end
     end
 end

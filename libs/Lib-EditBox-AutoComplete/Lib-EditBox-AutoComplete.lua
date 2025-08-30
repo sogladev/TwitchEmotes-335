@@ -54,6 +54,7 @@ function SetupAutoComplete(editbox, valueList, maxButtonCount, settings)
         interceptOnEnterPressed = false,
         addSpace = false,
         useTabToConfirm = false,
+        useVimNavigation = false,
         useArrowButtons = false,
     }
 
@@ -135,12 +136,14 @@ function SetupAutoComplete(editbox, valueList, maxButtonCount, settings)
         EditBoxAutoComplete_OnTextChanged(editbox, changedByUser)
     end)
 
+
     editbox:HookScript("OnChar", function(editbox, char)
 
         -- Vim-like Shift+H / Shift+J / Shift+K / Shift+L navigation: only active when
-        -- the autocomplete popup is shown and attached to this editbox.
+        -- the autocomplete popup is shown and attached to this editbox AND the
+        -- editbox has the useVimNavigation flag enabled in its settings.
         local autoComplete = EditBoxAutoCompleteBox
-        if autoComplete:IsShown() and autoComplete.parent == editbox and
+        if editbox.settings and editbox.settings.useVimNavigation and autoComplete:IsShown() and autoComplete.parent == editbox and
             (char == 'J' or char == 'K' or char == 'L' or char == 'H') then
             -- Remove the inserted uppercase char so it doesn't appear in the editbox
             local text = editbox:GetText() or ""
@@ -303,7 +306,8 @@ function EditBoxAutoComplete_OnLoad(self)
         edgeSize = 1,
         insets = {left = 0, right = 0, top = 0, bottom = 0}
     })
-    AutoCompleteInstructions:SetText("|cffbbbbbb" .. PRESS_TAB .. "|r");
+
+    EditBoxAutoCompleteInstructions:SetText("|cffbbbbbb" .. PRESS_TAB .. "|r")
 end
 
 function EditBoxAutoComplete_Update(parent, text, cursorPosition)
