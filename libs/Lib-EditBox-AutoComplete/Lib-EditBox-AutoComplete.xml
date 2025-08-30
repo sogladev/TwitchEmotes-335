@@ -29,7 +29,7 @@
 		<DisabledFont style="GameFontDisable"/>
 		<HighlightTexture inherits="UIPanelButtonHighlightTexture"/>
 	</Button>
-	<Frame name="EditBoxAutoCompleteBox" parent="UIParent" hidden="true" inherits="BackdropTemplate">
+	<Frame name="EditBoxAutoCompleteBox" parent="UIParent" hidden="true">
 		
 		<Size>
 			<AbsDimension x="5" y="5"/>
