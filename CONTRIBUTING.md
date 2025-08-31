@@ -14,13 +14,8 @@ A short video (not my video) demonstrating a static image emote: https://www.you
 
 If you only need to add or tweak a single emote, the easiest approach is to edit an existing emote rather than creating everything from scratch:
 
-- Replace or copy an existing `.tga` from `Emotes/` and edit the pixel data (for example in GIMP).
-- Update the corresponding Lua entries in `Emotes.lua` so the addon knows the correct path and display size. You must update both the `TwitchEmotes_defaultpack` mapping (path and display size) and `TwitchEmotes_emoticons` name/alias entry. If the emote is animated, also update `TwitchEmotes_animation_metadata`.
-
-Size notes:
-- Source `.tga` files are commonly prepared at 32x32 px.
-- The display size used by the addon (the size encoded in the Lua entry) is commonly `28:28`. It can differ from the source `.tga` size, e.g., a 32x32 source can be shown as `28:28` in chat.
-- The project also supports named sizes such as `LARGE` (i.e. 56x56), use the same naming conventions found elsewhere in `Emotes.lua`
+- Copy a `.tga` from `Emotes/` and edit the image, for example in GIMP.
+- Update the corresponding Lua entries in `Emotes.lua`, so the addon knows the correct path and display size. You must update both the `TwitchEmotes_defaultpack` mapping (path and display size) and `TwitchEmotes_emoticons` name/alias entry. If the emote is animated, also update `TwitchEmotes_animation_metadata`.
 
 ### Converting images to TGA (ImageMagick examples)
 
