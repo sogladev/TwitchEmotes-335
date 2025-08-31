@@ -16,38 +16,38 @@ This port adapts the popular retail addon for WotLK 3.3.5a legacy servers, maint
 **What works in 3.3.5a:**
 - [x] All emote functionality from the original addon
 - [x] Minimap integration with dropdown preview
-- [x] Auto-completion with Tab/Shift-Tab navigation
-- [ ] Auto-completion with Arrow key navigation
-- [ ] Error-free completion with Enter
 - [x] Statistics page (Shift-click minimap)
+- [x] Favorite List setting
 - [x] Hover tooltips and Shift-click to repost emotes
 - [x] Animated emotes
+- [x] WIM 3.3.7 support (if WIM's Emote feature is disabled: `/wim -> General: Message Formatting -> uncheck "Display Emoticons"`)
+- [x] Auto-completion with Tab/Shift-Tab navigation
+- [ ] Auto-completion with Arrow key navigation
+- [x] Auto-completion accept with ':'
+- [ ] Auto-completion accept and send (quick-send) with Enter (disabled by default, see [#2](https://github.com/sogladev/TwitchEmotes-335/issues/2))
 
-**Legacy Client Adaptations:**
-- Compatible with WotLK 3.3.5a interface version (30300)
-- Smart sizing to scale emotes to avoid graphical glitches when using multiple at once
-- Uses legacy-compatible libraries and API calls
-- WIM 3.3.7 support only works if WIM's Emote feature is disabled: `/wim -> General: Message Formatting -> uncheck "Display Emoticons"`
+**Known Issues & Adaptations:**
+See [GitHub Issues](https://github.com/sogladev/TwitchEmotes-335/issues) for details.
 
-### AutoComplete notes
+- [Multiple emotes sizing/glitches](https://github.com/sogladev/TwitchEmotes-335/issues/1):
+  Using several emotes produced overlap/glitches.
+  *Solved by dynamically scaling emotes down when more than one is used.*
 
-- Up/Down arrows can't be used to cycle suggestions.
-- Pressing Enter to confirm is disabled by default. If enabled, confirming with Enter may cause the client to produce an error such as `"addon-has-been-blocked-from-an-action-only-available-to-the-blizzard-ui"`. For example, `/target` when typed in chat is blocked; Use through macros still works.
-- As an alternative, Shift+J (next), Shift+K (previous), Shift+L (accept) are used for navigation.
-   Note: Shift+J/K/L (Vim-style) navigation is optional and can be enabled in the addon options (Autocomplete settings)
+- [Autocomplete "Enter" and "Arrow keys" don't work](https://github.com/sogladev/TwitchEmotes-335/issues/2):
+  Arrow keys and Enter key do not work due to client API limitations.
+  *Workaround: Using Enter to quick-send can be enabled, but may cause a taint error.*
 
-*For detailed technical changes made to ensure 3.3.5a compatibility, see the git commit history which documents all adaptations from the original retail version.*
+*For detailed technical changes made to ensure 3.3.5a compatibility, see the [changes](https://github.com/sogladev/TwitchEmotes-335/compare/c13a892e4083...main) documented in the git history.*
 
 ## Usage
 
 Type emote names in chat as you would on Twitch (e.g., `OMEGALUL`, `Pepega`, `forsenE`).
 
 **Auto-completion:** Type a colon `:` prefix to open a dropdown with all available emotes. Use Tab/Shift-Tab to navigate, hit colon again to select, or Enter to quick send.
-Shift+J/K/L navigation is available as an option in the Autocomplete settings
 
-**Minimap Integration:** Click the minimap button for emote previews, or Shift-click to open statistics page.
+**Minimap Integration:** Click the minimap button to preview a subset of emote icons. The minimap dropdown only shows emotes from enabled categories, which can be managed in the addon settings using the Favorite List checkboxes. Shift-click the minimap button to open the statistics page.
 
-**Interactive Emotes:** Hover over emotes to see their names, or Shift-click to repost them in your chat.
+**Interactive Emotes:** Hover over emotes to see their names, or Shift-click to repost them in chat.
 
 ## WIM (WoW Instant Messenger) Support
 
@@ -66,6 +66,7 @@ TwitchEmotes-335 includes full support for WIM 3.3.7. However, **WIM's built-in 
 ## Credits
 
 - **Original addon:** [Twitch Emotes v2](https://www.curseforge.com/wow/addons/twitch-emotes-v2) by [ren9790](https://addons.wago.io/user/ren9790)
+   Used version: Aug 13, 2025 Twitch Emotes V2.62.4 - 11.2 update
 - **3.3.5a Port:** [sogladev](https://github.com/sogladev/)
 - **Emote Sources:** Twitch streamers, BTTV, FFZ, Discord, and community contributions
 
