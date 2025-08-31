@@ -100,7 +100,6 @@ function TwitchEmotes_MinimapButton_OnClick(btn)
     if IsShiftKeyDown() then
         TwitchStatsScreen_OnLoad();
     else
-        -- For WoTLK, use native function
         ToggleDropDownMenu(1, nil, EmoticonMiniMapDropDown,"cursor", 0, 0);
     end
 end
@@ -126,7 +125,6 @@ function OpenMailBodyText.SetText(self, msg, ...)
 end
 
 function Emoticons_LoadMiniMapDropdown(self, level, menuList)
-    -- For WoTLK, use native function
     local info =  UIDropDownMenu_CreateInfo();
     
     info.isNotRadio = true;
@@ -143,7 +141,6 @@ function Emoticons_LoadMiniMapDropdown(self, level, menuList)
                 info.menuList = k;
                 info.noClickSound = 1; -- Set to 1 to suppress the sound when clicking the button
                 
-                -- For WoTLK, use native function
                 UIDropDownMenu_AddButton(info);
             end
         end
@@ -456,17 +453,13 @@ function Emoticons_InitChannelSettings()
         "CHAT_MSG_WHISPER",
         "CHAT_MSG_WHISPER_INFORM",
         "CHAT_MSG_CHANNEL",
+        "CHAT_MSG_BN_WHISPER",
+        "CHAT_MSG_BN_WHISPER_INFORM",
+        "CHAT_MSG_BN_CONVERSATION",
         "CHAT_MSG_INSTANCE_CHAT",
         "CHAT_MSG_INSTANCE_CHAT_LEADER",
         "MAIL"
     }
-    
-    -- Add Battle.net channels only if they exist (not in WoTLK)
-    if BNSendWhisper then
-        table.insert(channels, "CHAT_MSG_BN_WHISPER")
-        table.insert(channels, "CHAT_MSG_BN_WHISPER_INFORM")
-        table.insert(channels, "CHAT_MSG_BN_CONVERSATION")
-    end
 
     for i=1, #channels do
 
@@ -976,11 +969,6 @@ function Emoticons_InsertEmoticonsWithSize(msg, senderGUID, msgID, smartCount)
 
     lastmsgID = msgID; -- we only save stats of unique messages (this function is called multiple times per message, for each chat frame)
     return msg;
-end
-
-function Emoticons_InsertEmoticons(msg, senderGUID, msgID)
-    -- Legacy function - use new function without smart sizing for backward compatibility
-    return Emoticons_InsertEmoticonsWithSize(msg, senderGUID, msgID, nil)
 end
 
 local oldsethyperlink = ItemRefTooltip.SetHyperlink
