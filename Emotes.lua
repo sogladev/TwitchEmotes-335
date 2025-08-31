@@ -1,4 +1,6 @@
 TwitchEmotes_defaultpack = {
+    -- Project Epoch
+    ["mpreg"] = "Interface\\AddOns\\TwitchEmotes\\Emotes\\ProjectEpoch\\mpreg.tga:32:32",
     -- AdmiralBulldog
     ["admiral1"] = "Interface\\AddOns\\TwitchEmotes\\Emotes\\AdmiralBulldog\\admiral1.tga:28:28",
     ["admiral2"] = "Interface\\AddOns\\TwitchEmotes\\Emotes\\AdmiralBulldog\\admiral2.tga:28:28",
@@ -3731,6 +3733,8 @@ TwitchEmotes_animation_metadata = {
 }
 
 TwitchEmotes_emoticons = {
+    -- Project Epoch
+    ["mpreg"] = "mpreg",
     -- AdmiralBulldog
     ["admiral1"] = "admiral1",
     ["admiral2"] = "admiral2",
