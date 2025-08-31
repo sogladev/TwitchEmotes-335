@@ -11,6 +11,9 @@ Shows Twitch emotes in your chat by typing them as you would into Twitch. Simply
 
 This port adapts the popular retail addon for WotLK 3.3.5a legacy servers, maintaining full functionality while being compatible with the older client.
 
+## Requirements
+This addon requires the ClassicAPI addon from: https://gitlab.com/Tsoukie/classicapi
+
 ## Port-Specific Features
 
 **What works in 3.3.5a:**

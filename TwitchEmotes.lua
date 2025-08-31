@@ -398,13 +398,8 @@ function Emoticons_OnEvent(self, event, ...)
 		-- TODO: Waiting 1 second is kinda arbitrary, find a nicer solution.
 		-- We don't accept Emote stat updates before ElvUI has posted it's chat history
 		-- else they will be counted twice
-		local timerFrame = CreateFrame("Frame")
-		timerFrame:SetScript("OnUpdate", function(self, elapsed)
-			self.elapsed = (self.elapsed or 0) + elapsed
-			if self.elapsed >= 1 then
-				accept_stat_updates = true;
-				self:SetScript("OnUpdate", nil)
-			end
+		C_Timer.After(1, function()
+			accept_stat_updates = true;
 		end)
         
         Broker_TwitchEmotes = LDB:NewDataObject("TwitchEmotes", {

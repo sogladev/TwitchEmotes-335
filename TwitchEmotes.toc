@@ -5,6 +5,7 @@
 ## Notes: Adds popular Twitch & Discord emotes to your chat. Developed by Ren - Illidan (US) & Jons - Golemagg (EU)
 ## Version: v2
 ## SavedVariables: Emoticons_Settings, TwitchEmoteStatistics
+## RequiredDeps: !!!ClassicAPI
 ## OptionalDeps: LibStub, LibUIDropDownMenu
 
 Libs\load_libs.xml
