@@ -26,7 +26,7 @@ This addon requires the ClassicAPI addon from: https://gitlab.com/Tsoukie/classi
 - [x] WIM 3.3.7 support (if WIM's Emote feature is disabled: `/wim -> General: Message Formatting -> uncheck "Display Emoticons"`)
 - [x] Auto-completion with Tab/Shift-Tab navigation
 - [ ] Auto-completion with Arrow key navigation
-- [x] Auto-completion accept with ':'
+- [x] Auto-completion accepts with ':'
 - [ ] Auto-completion accept and send (quick-send) with Enter (disabled by default, see [#2](https://github.com/sogladev/TwitchEmotes-335/issues/2))
 
 **Known Issues & Adaptations:**
@@ -37,7 +37,7 @@ See [GitHub Issues](https://github.com/sogladev/TwitchEmotes-335/issues) for det
   *Solved by dynamically scaling emotes down when more than one is used.*
 
 - [Autocomplete "Enter" and "Arrow keys" don't work](https://github.com/sogladev/TwitchEmotes-335/issues/2):
-  Arrow keys and Enter key do not work due to client API limitations.
+  Arrow keys and the Enter key do not work due to client API limitations.
   *Workaround: Using Enter to quick-send can be enabled, but may cause a taint error.*
 
 *For detailed technical changes made to ensure 3.3.5a compatibility, see the [changes](https://github.com/sogladev/TwitchEmotes-335/compare/c13a892e4083...main) documented in the git history.*
@@ -68,13 +68,12 @@ TwitchEmotes-335 includes full support for WIM 3.3.7. However, **WIM's built-in 
 
 ## Contributing
 
-See CONTRIBUTING.md for instructions on adding emotes (static and animated) and the required lua changes.
+See CONTRIBUTING.md for instructions on adding emotes (static and animated) and the required Lua changes.
 
 ## Credits
 
 - **Original addon:** [Twitch Emotes v2](https://www.curseforge.com/wow/addons/twitch-emotes-v2) by [ren9790](https://addons.wago.io/user/ren9790)
    Used version: Aug 13, 2025 Twitch Emotes V2.62.4 - 11.2 update
-- **3.3.5a Port:** [sogladev](https://github.com/sogladev/)
 - **Emote Sources:** Twitch streamers, BTTV, FFZ, Discord, and community contributions
 
 *This addon does not access the Twitch API - emotes are added manually by the author.*
