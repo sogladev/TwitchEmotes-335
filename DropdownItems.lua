@@ -226,5 +226,8 @@ TwitchEmotes_dropdown_options = {
         "peepoSuspicious", "peepoOK", "peepoBored", "peepoParty",
         "pillowJammies", "peepoFriends", "peepoGroovie", "peepoCat",
         "peepoSleepo"
+    },
+    [26] = { -- ?
+        "Project Epoch", "mpreg"
     }
 };

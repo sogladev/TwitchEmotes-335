@@ -1,4 +1,7 @@
 TwitchEmotes_defaultpack = {
+    -- Project Epoch
+    ["pregnantMan"] = "Interface\\AddOns\\TwitchEmotes\\Emotes\\ProjectEpoch\\pregnantMan.tga:32:32",
+    ["mpreg"] = "Interface\\AddOns\\TwitchEmotes\\Emotes\\ProjectEpoch\\mpreg.tga:32:32",
     -- AdmiralBulldog
     ["admiral1"] = "Interface\\AddOns\\TwitchEmotes\\Emotes\\AdmiralBulldog\\admiral1.tga:28:28",
     ["admiral2"] = "Interface\\AddOns\\TwitchEmotes\\Emotes\\AdmiralBulldog\\admiral2.tga:28:28",
@@ -3620,6 +3623,8 @@ TwitchEmotes_defaultpack = {
 };
 
 TwitchEmotes_animation_metadata = {
+    -- Project Epoch
+    ["Interface\\AddOns\\TwitchEmotes\\Emotes\\ProjectEpoch\\pregnantMan.tga"] = {["nFrames"] = 48, ["frameWidth"] = 32, ["frameHeight"] = 32, ["imageWidth"]=32, ["imageHeight"]=2048, ["framerate"] = 12},
     ["Interface\\AddOns\\TwitchEmotes\\Emotes\\Custom\\Clap.tga"] = {["nFrames"] = 2, ["frameWidth"] = 32, ["frameHeight"] = 32, ["imageWidth"]=32, ["imageHeight"]=64, ["framerate"] = 6},
     ["Interface\\AddOns\\TwitchEmotes\\Emotes\\Custom\\modCheck.tga"] = {["nFrames"] = 28, ["frameWidth"] = 32, ["frameHeight"] = 32, ["imageWidth"]=32, ["imageHeight"]=1024, ["framerate"] = 9},
     ["Interface\\AddOns\\TwitchEmotes\\Emotes\\Custom\\goinginsane.tga"] = {["nFrames"] = 47, ["frameWidth"] = 32, ["frameHeight"] = 32, ["imageWidth"]=32, ["imageHeight"]=2048, ["framerate"] = 25},
@@ -3731,6 +3736,9 @@ TwitchEmotes_animation_metadata = {
 }
 
 TwitchEmotes_emoticons = {
+    -- Project Epoch
+    ["pregnantMan"] = "pregnantMan",
+    ["mpreg"] = "mpreg",
     -- AdmiralBulldog
     ["admiral1"] = "admiral1",
     ["admiral2"] = "admiral2",
