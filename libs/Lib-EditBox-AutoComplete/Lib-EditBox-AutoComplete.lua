@@ -89,6 +89,23 @@ function SetupAutoComplete(editbox, valueList, maxButtonCount, settings)
         end
     end);
 
+    -- WotLK: After applying the suggestion, also send the message
+    if editbox.settings.quickSendOnEnter then
+        editbox:SetScript("OnEnterPressed", function(self)
+            local consumed = EditBoxAutoComplete_OnEnterPressed(self)
+            if consumed then
+                if self.old_OnEnterPressed then
+                    self.old_OnEnterPressed(self)
+                end
+                return
+            end
+
+            if self.old_OnEnterPressed then
+                self.old_OnEnterPressed(self)
+            end
+        end)
+    end
+
     if (settings.useArrowButtons) then
         editbox:SetScript("OnKeyDown", function(editbox, key)
 

@@ -29,6 +29,7 @@ Emoticons_Settings = {
     ["ENABLE_AUTOCOMPLETE"] = true,
     ["ENABLE_ANIMATEDEMOTES"] = true,
     ["AUTOCOMPLETE_CONFIRM_WITH_TAB"] = false,
+    ["AUTOCOMPLETE_QUICKSEND"] = false,
     ["ENABLE_SMART_SIZING"] = true,
     ["FAVEMOTES"] = {
         true, true, true, true, true, true, true, true, true, true, true, true,
@@ -433,6 +434,7 @@ function Emoticons_OnEvent(self, event, ...)
                 interceptOnEnterPressed = true,
                 addSpace = true,
                 useTabToConfirm = Emoticons_Settings["AUTOCOMPLETE_CONFIRM_WITH_TAB"],
+                quickSendOnEnter = Emoticons_Settings["AUTOCOMPLETE_QUICKSEND"],
                 useArrowButtons = true,
             }
             SetupAutoComplete(editbox, suggestionList, maxButtonCount, autocompletesettings);
@@ -539,6 +541,15 @@ function Emoticons_OptionsWindow_OnShow(self)
     local autocompleteTabButton = _G["$autocompleteUseTabToComplete"]
     if autocompleteTabButton and Emoticons_Settings["AUTOCOMPLETE_CONFIRM_WITH_TAB"] then
         autocompleteTabButton:SetChecked(true);
+    end
+
+    local autocompleteEnterButton = _G["$autocompleteConfirmWithEnter"]
+    if autocompleteEnterButton and Emoticons_Settings["AUTOCOMPLETE_QUICKSEND"] then
+        autocompleteEnterButton:SetChecked(true);
+    end
+
+    if autocompleteEnterButton then
+        autocompleteEnterButton.tooltipText = "This will enable quick sending of messages with Enter. Requires /reload and may cause taint: 'addon-has-been-blocked-from-an-action-only-available-to-the-blizzard-ui'.";
     end
 
     local smartSizingButton = _G["$EnableSmartSizingButton"]
@@ -707,6 +718,17 @@ function Emoticons_SetConfirmWithTab(state)
     end
 end
 
+function Emoticons_SetAutoCompleteQuickSend(state)
+    Emoticons_Settings["AUTOCOMPLETE_QUICKSEND"] = state;
+    for _, frameName in pairs(CHAT_FRAMES) do
+        local frame = _G[frameName]
+        local editbox = frame.editBox;
+        if editbox ~= nil and editbox.settings ~= nil then
+            editbox.settings.quickSendOnEnter = Emoticons_Settings["AUTOCOMPLETE_QUICKSEND"];
+        end
+    end
+end
+
 function Emoticons_SetLargeEmotes(state)
     Emoticons_Settings["LARGEEMOTES"] = state;
 end
@@ -803,6 +825,7 @@ function Emoticons_SetAutoComplete(state)
                 interceptOnEnterPressed = true,
                 addSpace = true,
                 useTabToConfirm = Emoticons_Settings["AUTOCOMPLETE_CONFIRM_WITH_TAB"],
+                quickSendOnEnter = Emoticons_Settings["AUTOCOMPLETE_QUICKSEND"],
                 useArrowButtons = true,
             }
 
