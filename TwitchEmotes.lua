@@ -125,40 +125,62 @@ function OpenMailBodyText.SetText(self, msg, ...)
 end
 
 function Emoticons_LoadMiniMapDropdown(self, level, menuList)
-    local info =  UIDropDownMenu_CreateInfo();
-    
-    info.isNotRadio = true;
-    info.notCheckable = true;
-    info.notClickable = false;
-    info.noClickSound = 1; -- Set to 1 to suppress the sound when clicking the button
-    
     if (level or 1) == 1 then
         for k, v in ipairs(TwitchEmotes_dropdown_options) do
             if (Emoticons_Settings["FAVEMOTES"][k]) then
-                info.hasArrow = true;
-                info.text = v[1];
-                info.value = false;
-                info.menuList = k;
-                info.noClickSound = 1; -- Set to 1 to suppress the sound when clicking the button
-                
-                UIDropDownMenu_AddButton(info);
+                local info = UIDropDownMenu_CreateInfo()
+                info.isNotRadio = true
+                info.notCheckable = true
+                info.notClickable = false
+                info.noClickSound = 1
+
+                info.hasArrow = true
+                info.text = v[1]
+                info.value = false
+                info.menuList = k
+
+                UIDropDownMenu_AddButton(info)
             end
         end
     else
-        first = true;
+        local first = true
         for ke, va in ipairs(TwitchEmotes_dropdown_options[menuList]) do
             if (first) then
-                first = false;
+                first = false
             else
-                -- if(TwitchEmotes_defaultpack[va] == nil) then
-                --     print(ke.." " .. va .. " is broken");
-                -- end
-                
-                info.text = "|T" .. TwitchEmotes_defaultpack[va] .. "|t " .. va;
-                info.value = va;
-                info.func = Emoticons_Dropdown_OnClick;
-                info.noClickSound = 1; -- Set to 1 to suppress the sound when clicking the button
-                UIDropDownMenu_AddButton(info, level);
+                local info = UIDropDownMenu_CreateInfo()
+                info.isNotRadio = true
+                info.notCheckable = true
+                info.notClickable = false
+                info.noClickSound = 1
+
+                -- Build texture string
+                local texstr = ""
+                local path_and_size = TwitchEmotes_defaultpack[va]
+                if path_and_size then
+                    local path = string.match(path_and_size, "(.*%.tga)")
+                    local size = string.match(path_and_size, ":(.*)")
+                    local animdata = nil
+                    if path then animdata = TwitchEmotes_GetAnimData(path) end
+
+                    if animdata then
+                        local fw = animdata.frameWidth or 24
+                        local fh = animdata.frameHeight or 24
+                        if size then
+                            local w, h = string.match(size, "^(%d+):(%d+)$")
+                            if w and h then fw = tonumber(w); fh = tonumber(h) end
+                        end
+                        texstr = TwitchEmotes_BuildEmoteFrameStringWithDimensions(path, animdata, 0, fw, fh)
+                    else
+                        texstr = "|T" .. path_and_size .. "|t"
+                    end
+                end
+
+                info.text = (texstr ~= "" and texstr .. " " or "") .. va
+                info.value = va
+                info.func = Emoticons_Dropdown_OnClick
+
+                UIDropDownMenu_AddButton(info, level)
             end
         end
     end
