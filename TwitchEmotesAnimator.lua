@@ -36,6 +36,70 @@ function TwitchEmotesAnimator_OnUpdate(self, elapsed)
             end
         end
 
+        -- Update animated emotes in WIM windows (if WIM is loaded)
+        if WIM and WIM.windows and WIM.windows.active then
+            -- Check active whisper windows
+            if WIM.windows.active.whisper then
+                for _, win in pairs(WIM.windows.active.whisper) do
+                    if win and win.widgets and win.widgets.chat_display and win:IsShown() then
+                        local chatDisplay = win.widgets.chat_display
+                        if chatDisplay:IsVisible() then
+                            -- Check each fontstring in the ScrollingMessageFrame
+                            for i = 1, chatDisplay:GetNumRegions() do
+                                local region = select(i, chatDisplay:GetRegions())
+                                if region and region:GetObjectType() == "FontString" then
+                                    local text = region:GetText()
+                                    if text and string.find(text, "|TInterface\\AddOns\\TwitchEmotes\\Emotes") then
+                                        TwitchEmotesAnimator_UpdateEmoteInFontString(region, nil, nil);
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+
+            -- Check active chat windows (if any)
+            if WIM.windows.active.chat then
+                for _, win in pairs(WIM.windows.active.chat) do
+                    if win and win.widgets and win.widgets.chat_display and win:IsShown() then
+                        local chatDisplay = win.widgets.chat_display
+                        if chatDisplay:IsVisible() then
+                            for i = 1, chatDisplay:GetNumRegions() do
+                                local region = select(i, chatDisplay:GetRegions())
+                                if region and region:GetObjectType() == "FontString" then
+                                    local text = region:GetText()
+                                    if text and string.find(text, "|TInterface\\AddOns\\TwitchEmotes\\Emotes") then
+                                        TwitchEmotesAnimator_UpdateEmoteInFontString(region, nil, nil);
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+
+            -- Check active w2w windows (if any)
+            if WIM.windows.active.w2w then
+                for _, win in pairs(WIM.windows.active.w2w) do
+                    if win and win.widgets and win.widgets.chat_display and win:IsShown() then
+                        local chatDisplay = win.widgets.chat_display
+                        if chatDisplay:IsVisible() then
+                            for i = 1, chatDisplay:GetNumRegions() do
+                                local region = select(i, chatDisplay:GetRegions())
+                                if region and region:GetObjectType() == "FontString" then
+                                    local text = region:GetText()
+                                    if text and string.find(text, "|TInterface\\AddOns\\TwitchEmotes\\Emotes") then
+                                        TwitchEmotesAnimator_UpdateEmoteInFontString(region, nil, nil);
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+
         -- Update animated emotes in statistics screen
         if(TwitchStatsScreen:IsVisible()) then
            
