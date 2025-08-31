@@ -228,6 +228,6 @@ TwitchEmotes_dropdown_options = {
         "peepoSleepo"
     },
     [26] = { -- ?
-        "Project Epoch", "mpreg"
+        "Project Epoch", "mpreg", "pregnantMan"
     }
 };
