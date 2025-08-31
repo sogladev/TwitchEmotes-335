@@ -66,6 +66,10 @@ TwitchEmotes-335 includes full support for WIM 3.3.7. However, **WIM's built-in 
 
 *With WIM's emoticons disabled, TwitchEmotes will handle all emote processing in whisper windows, including full animation support.*
 
+## Contributing
+
+See CONTRIBUTING.md for instructions on adding emotes (static and animated) and the required lua changes.
+
 ## Credits
 
 - **Original addon:** [Twitch Emotes v2](https://www.curseforge.com/wow/addons/twitch-emotes-v2) by [ren9790](https://addons.wago.io/user/ren9790)
