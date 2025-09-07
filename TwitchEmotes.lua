@@ -372,6 +372,13 @@ function Emoticons_OnEvent(self, event, ...)
                     "samshades", "skoopas","SkoopRage", "Snakers"
                 }
             end
+        -- Project Epoch
+        elseif GetRealmName() == "Kezan" or GetRealmName() == "Gurubashi" then
+            TwitchEmotes_defaultpack["pregnantMan"] = "Interface\\AddOns\\TwitchEmotes\\Emotes\\ProjectEpoch\\pregnantMan.tga:32:32"
+            TwitchEmotes_defaultpack["mpreg"] = "Interface\\AddOns\\TwitchEmotes\\Emotes\\ProjectEpoch\\mpreg.tga:32:32"
+            TwitchEmotes_animation_metadata["Interface\\AddOns\\TwitchEmotes\\Emotes\\ProjectEpoch\\pregnantMan.tga"] = {["nFrames"] = 48, ["frameWidth"] = 32, ["frameHeight"] = 32, ["imageWidth"]=32, ["imageHeight"]=2048, ["framerate"] = 12}
+            TwitchEmotes_emoticons["pregnantMan"] = "pregnantMan"
+            TwitchEmotes_emoticons["mpreg"] = "mpreg"
         end
 
         local dateTime = date("*t")

@@ -76,9 +76,6 @@ TwitchEmotes_defaultpack = {
     ["YEP"] = "Interface\\AddOns\\TwitchEmotes\\Emotes\\Chromiecraft\\YEP.tga:32:32",
     ["KekThas"] = "Interface\\AddOns\\TwitchEmotes\\Emotes\\Chromiecraft\\KekThas.tga:32:32",
     ["dedge"] = "Interface\\AddOns\\TwitchEmotes\\Emotes\\Chromiecraft\\dedge.tga:32:32",
-    -- Project Epoch
-    ["pregnantMan"] = "Interface\\AddOns\\TwitchEmotes\\Emotes\\ProjectEpoch\\pregnantMan.tga:32:32",
-    ["mpreg"] = "Interface\\AddOns\\TwitchEmotes\\Emotes\\ProjectEpoch\\mpreg.tga:32:32",
     -- AdmiralBulldog
     ["admiral1"] = "Interface\\AddOns\\TwitchEmotes\\Emotes\\AdmiralBulldog\\admiral1.tga:28:28",
     ["admiral2"] = "Interface\\AddOns\\TwitchEmotes\\Emotes\\AdmiralBulldog\\admiral2.tga:28:28",
@@ -3704,8 +3701,6 @@ TwitchEmotes_animation_metadata = {
     ["Interface\\AddOns\\TwitchEmotes\\Emotes\\Chromiecraft\\AngryNelfNoises.tga"] = {["nFrames"] = 5, ["frameWidth"] = 32, ["frameHeight"] = 32, ["imageWidth"]=32, ["imageHeight"]=256, ["framerate"] = 20},
     ["Interface\\AddOns\\TwitchEmotes\\Emotes\\Chromiecraft\\VeryAngryNelfNoises.tga"] = {["nFrames"] = 6, ["frameWidth"] = 32, ["frameHeight"] = 32, ["imageWidth"]=32, ["imageHeight"]=256, ["framerate"] = 25},
     ["Interface\\AddOns\\TwitchEmotes\\Emotes\\Chromiecraft\\ccBonk.tga"] = {["nFrames"] = 8, ["frameWidth"] = 32, ["frameHeight"] = 32, ["imageWidth"]=32, ["imageHeight"]=256, ["framerate"] = 40},
-    -- Project Epoch
-    ["Interface\\AddOns\\TwitchEmotes\\Emotes\\ProjectEpoch\\pregnantMan.tga"] = {["nFrames"] = 48, ["frameWidth"] = 32, ["frameHeight"] = 32, ["imageWidth"]=32, ["imageHeight"]=2048, ["framerate"] = 12},
     ["Interface\\AddOns\\TwitchEmotes\\Emotes\\Custom\\Clap.tga"] = {["nFrames"] = 2, ["frameWidth"] = 32, ["frameHeight"] = 32, ["imageWidth"]=32, ["imageHeight"]=64, ["framerate"] = 6},
     ["Interface\\AddOns\\TwitchEmotes\\Emotes\\Custom\\modCheck.tga"] = {["nFrames"] = 28, ["frameWidth"] = 32, ["frameHeight"] = 32, ["imageWidth"]=32, ["imageHeight"]=1024, ["framerate"] = 9},
     ["Interface\\AddOns\\TwitchEmotes\\Emotes\\Custom\\goinginsane.tga"] = {["nFrames"] = 47, ["frameWidth"] = 32, ["frameHeight"] = 32, ["imageWidth"]=32, ["imageHeight"]=2048, ["framerate"] = 25},
@@ -3893,9 +3888,6 @@ TwitchEmotes_emoticons = {
     ["YeaBoi"] = "YeaBoi",
     ["YEP"] = "YEP",
     ["KekThas"] = "KekThas",
-    -- Project Epoch
-    ["pregnantMan"] = "pregnantMan",
-    ["mpreg"] = "mpreg",
     -- AdmiralBulldog
     ["admiral1"] = "admiral1",
     ["admiral2"] = "admiral2",
