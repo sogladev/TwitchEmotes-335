@@ -106,3 +106,10 @@ TwitchEmotes_emoticons = {
 - Include a short PR description: which emotes were added, whether animated, and any special notes.
 
 Example PR for reference (one static + one animated): https://github.com/sogladev/TwitchEmotes-335/pull/3
+
+## Emojis from a discord server
+
+Downloading Emojis from a discord server:
+https://github.com/ThaTiemsz/Discord-Emoji-Downloader
+
+Use tools in `tools/` to automate emote creation.
