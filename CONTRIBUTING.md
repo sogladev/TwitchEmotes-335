@@ -111,3 +111,5 @@ Example PR for reference (one static + one animated): https://github.com/soglade
 
 Downloading Emojis from a discord server:
 https://github.com/ThaTiemsz/Discord-Emoji-Downloader
+
+Use tools in `tools/` to automate emote creation.
