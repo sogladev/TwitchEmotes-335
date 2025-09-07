@@ -2,6 +2,7 @@ TwitchEmotes_defaultpack = {
     -- Chromiecraft
     ["AngryNelfNoises"] = "Interface\\AddOns\\TwitchEmotes\\Emotes\\Chromiecraft\\AngryNelfNoises.tga:32:32",
     ["VeryAngryNelfNoises"] = "Interface\\AddOns\\TwitchEmotes\\Emotes\\Chromiecraft\\VeryAngryNelfNoises.tga:32:32",
+    ["ccBonk"] = "Interface\\AddOns\\TwitchEmotes\\Emotes\\Chromiecraft\\ccBonk.tga:32:32",
     ["AriseMyChampion"] = "Interface\\AddOns\\TwitchEmotes\\Emotes\\Chromiecraft\\AriseMyChampion.tga:32:32",
     ["bedge"] = "Interface\\AddOns\\TwitchEmotes\\Emotes\\Chromiecraft\\bedge.tga:32:32",
     ["CatOK"] = "Interface\\AddOns\\TwitchEmotes\\Emotes\\Chromiecraft\\CatOK.tga:32:32",
@@ -3701,7 +3702,8 @@ TwitchEmotes_defaultpack = {
 TwitchEmotes_animation_metadata = {
     -- Chromiecraft
     ["Interface\\AddOns\\TwitchEmotes\\Emotes\\Chromiecraft\\AngryNelfNoises.tga"] = {["nFrames"] = 5, ["frameWidth"] = 32, ["frameHeight"] = 32, ["imageWidth"]=32, ["imageHeight"]=256, ["framerate"] = 20},
-    ["Interface\\AddOns\\TwitchEmotes\\Emotes\\Custom\\VeryAngryNelfNoises.tga"] = {["nFrames"] = 6, ["frameWidth"] = 32, ["frameHeight"] = 32, ["imageWidth"]=32, ["imageHeight"]=256, ["framerate"] = 25},
+    ["Interface\\AddOns\\TwitchEmotes\\Emotes\\Chromiecraft\\VeryAngryNelfNoises.tga"] = {["nFrames"] = 6, ["frameWidth"] = 32, ["frameHeight"] = 32, ["imageWidth"]=32, ["imageHeight"]=256, ["framerate"] = 25},
+    ["Interface\\AddOns\\TwitchEmotes\\Emotes\\Chromiecraft\\ccBonk.tga"] = {["nFrames"] = 8, ["frameWidth"] = 32, ["frameHeight"] = 32, ["imageWidth"]=32, ["imageHeight"]=256, ["framerate"] = 40},
     -- Project Epoch
     ["Interface\\AddOns\\TwitchEmotes\\Emotes\\ProjectEpoch\\pregnantMan.tga"] = {["nFrames"] = 48, ["frameWidth"] = 32, ["frameHeight"] = 32, ["imageWidth"]=32, ["imageHeight"]=2048, ["framerate"] = 12},
     ["Interface\\AddOns\\TwitchEmotes\\Emotes\\Custom\\Clap.tga"] = {["nFrames"] = 2, ["frameWidth"] = 32, ["frameHeight"] = 32, ["imageWidth"]=32, ["imageHeight"]=64, ["framerate"] = 6},
@@ -3817,6 +3819,7 @@ TwitchEmotes_animation_metadata = {
 TwitchEmotes_emoticons = {
     ["AngryNelfNoises"] = "AngryNelfNoises",
     ["VeryAngryNelfNoises"] = "VeryAngryNelfNoises",
+    ["ccBonk"] = "ccBonk",
     ["AriseMyChampion"] = "AriseMyChampion",
     ["bedge"] = "bedge",
     ["CatOK"] = "CatOK",
