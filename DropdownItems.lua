@@ -227,7 +227,8 @@ TwitchEmotes_dropdown_options = {
         "pillowJammies", "peepoFriends", "peepoGroovie", "peepoCat",
         "peepoSleepo"
     },
-    [26] = { -- ?
-        "Project Epoch", "mpreg", "pregnantMan"
+    [26] = { -- 10
+        "Chromiecraft", "dedge", "ccKekThas", "CavemanBob", "Sadge",
+        "pepeStonks", "pepeStonks", "AriseMyChampion", "ccThis", "YEP", "ccAC"
     }
 };
